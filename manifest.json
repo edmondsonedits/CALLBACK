@@ -1,0 +1,61 @@
+{
+  "version": 3,
+  "type": "callback-hybrid-avatar",
+  "familySprite": {
+    "cols": 4,
+    "rows": 4,
+    "cell": [256, 320]
+  },
+  "headSprite": {
+    "cols": 4,
+    "rows": 4,
+    "cell": [192, 192]
+  },
+  "family": {
+    "virginia": {"col": 0, "row": 0},
+    "gregory": {"col": 1, "row": 0},
+    "aaron": {"col": 2, "row": 0},
+    "liv": {"col": 3, "row": 0},
+    "danny": {"col": 0, "row": 1},
+    "kristin": {"col": 1, "row": 1},
+    "doug": {"col": 2, "row": 1},
+    "ruth": {"col": 3, "row": 1},
+    "judy": {"col": 0, "row": 2},
+    "brandon": {"col": 1, "row": 2},
+    "emily": {"col": 2, "row": 2},
+    "jaclyne": {"col": 3, "row": 2},
+    "alex": {"col": 0, "row": 3}
+  },
+  "bodySources": {
+    "floral-summer": "virginia",
+    "broad-blue": "gregory",
+    "casual-gray": "aaron",
+    "dark-utility": "liv",
+    "tropical-blue": "danny",
+    "black-outdoor": "kristin",
+    "hiking-gray": "doug",
+    "graphic-dress": "ruth",
+    "blue-plaid": "judy",
+    "formal-suit": "brandon",
+    "red-dress": "emily",
+    "adventure-green": "jaclyne",
+    "sport-hoodie": "alex"
+  },
+  "defaultBodies": {
+    "virginia": "floral-summer",
+    "gregory": "broad-blue",
+    "aaron": "casual-gray",
+    "liv": "dark-utility",
+    "danny": "tropical-blue",
+    "kristin": "black-outdoor",
+    "doug": "hiking-gray",
+    "ruth": "graphic-dress",
+    "judy": "blue-plaid",
+    "brandon": "formal-suit",
+    "emily": "red-dress",
+    "jaclyne": "adventure-green",
+    "alex": "sport-hoodie"
+  },
+  "animations": ["idle", "wave", "think", "laugh", "shock", "sad", "point", "cheer", "dance", "victory"],
+  "notes": "Artwork is embedded through JS base64 chunks for reliable GitHub/@Sites portability. The renderer uses a high-quality illustrated head layer over a reusable body source layer."
+}
