@@ -5,19 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#101a42" />
   <title>CALLBACK Avatar Studio</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="avatar-v2.css" />
 </head>
 <body>
   <main class="app-shell">
     <header class="topbar">
-      <div class="brand-lockup" aria-label="Callback Avatar Studio">
+      <div class="brand-lockup" aria-label="CALLBACK Avatar Studio">
         <div class="brand-mark" aria-hidden="true">↩</div>
         <div>
           <div class="eyebrow">CALLBACK</div>
           <h1>Avatar Studio</h1>
         </div>
       </div>
-      <p class="tagline">Build a family preset or make somebody completely new.</p>
+      <p class="tagline">Mii-like family avatars with enough detail to actually recognize the person.</p>
     </header>
 
     <section class="studio-grid" aria-label="Avatar creator">
@@ -26,6 +26,7 @@
           <div>
             <span class="eyebrow">LIVE PREVIEW</span>
             <h2 id="avatarName">Custom Player</h2>
+            <p class="preset-note" id="presetNote">Start from scratch or choose a family look-alike.</p>
           </div>
           <span class="status-pill" id="statusPill">Idle</span>
         </div>
@@ -38,8 +39,13 @@
           <button class="button primary" id="doneBtn" type="button">Done ✓</button>
         </div>
 
+        <div class="quick-expression" aria-label="Quick reactions">
+          <span>Try a reaction</span>
+          <div class="reaction-row" id="quickReactions"></div>
+        </div>
+
         <div class="saved-banner" id="savedBanner" role="status" aria-live="polite" hidden>
-          Avatar saved to the player payload.
+          Avatar saved on this device and serialized for CALLBACK.
         </div>
       </section>
 
@@ -53,14 +59,14 @@
         <div class="tab-panel" id="createPanel" role="tabpanel" aria-labelledby="createTab">
           <label class="field-label" for="playerName">Player name</label>
           <input class="name-input" id="playerName" maxlength="18" value="Custom Player" autocomplete="off" />
-
-          <div class="editor-sections" id="editorSections"></div>
+          <div class="feature-nav" id="featureNav" aria-label="Avatar feature categories"></div>
+          <div class="editor-workspace" id="editorWorkspace"></div>
         </div>
 
         <div class="tab-panel" id="familyPanel" role="tabpanel" aria-labelledby="familyTab" hidden>
           <div class="section-intro">
-            <span class="eyebrow">FAMILY PRESETS</span>
-            <p>Tap a person to load their recognizable CALLBACK version. Every preset can still be edited.</p>
+            <span class="eyebrow">CHOOSE A LOOK-ALIKE</span>
+            <p>These 13 presets are tuned from the family photos you supplied. Tap one, then fine-tune anything you want in Create.</p>
           </div>
           <div class="preset-grid" id="presetGrid"></div>
         </div>
@@ -68,7 +74,7 @@
         <div class="tab-panel" id="animationPanel" role="tabpanel" aria-labelledby="animationTab" hidden>
           <div class="section-intro">
             <span class="eyebrow">ANIMATION LAB</span>
-            <p>These animations use the same skeleton for every family preset and every custom avatar.</p>
+            <p>The body is a lightweight SVG puppet. The same animation vocabulary works for every preset and custom avatar.</p>
           </div>
           <div class="animation-grid" id="animationGrid"></div>
         </div>
@@ -79,7 +85,7 @@
       <div class="integration-copy">
         <span class="eyebrow">GAME INTEGRATION</span>
         <h2 id="integrationTitle">Player payload</h2>
-        <p>CALLBACK only needs to synchronize this small configuration. The avatar is rebuilt and animated on every device.</p>
+        <p>CALLBACK only synchronizes this compact configuration. Each device rebuilds the SVG locally, so facial detail does not require image files.</p>
       </div>
       <pre class="payload" id="payloadPreview" tabindex="0"></pre>
     </section>
@@ -88,14 +94,20 @@
       <div class="lobby-heading">
         <div>
           <span class="eyebrow">CALLBACK LOBBY DEMO</span>
-          <h2 id="lobbyTitle">Characters in the game</h2>
+          <h2 id="lobbyTitle">Family presets together</h2>
         </div>
         <button class="button secondary compact" id="addToLobbyBtn" type="button">Add current avatar</button>
       </div>
       <div class="lobby-grid" id="lobbyGrid"></div>
     </section>
+
+    <footer class="research-note">
+      <strong>Editor design:</strong> inspired by the proven “choose a look-alike, then fine-tune” pattern used by Mii-style editors and modular SVG avatar libraries. CALLBACK artwork remains original and dependency-free.
+    </footer>
   </main>
 
-  <script src="app.js"></script>
+  <script src="avatar-data.js"></script>
+  <script src="avatar-render.js"></script>
+  <script src="avatar-editor.js"></script>
 </body>
 </html>
