@@ -1,125 +1,84 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#101a42" />
-  <title>CALLBACK Avatar Studio</title>
-  <link rel="stylesheet" href="avatar-v2.css" />
-  <link rel="stylesheet" href="avatar-polish.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#101a42">
+  <title>CALLBACK Hybrid Avatar Studio</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main class="app-shell">
-    <header class="topbar">
-      <div class="brand-lockup" aria-label="CALLBACK Avatar Studio">
-        <div class="brand-mark" aria-hidden="true">↩</div>
-        <div>
-          <div class="eyebrow">CALLBACK</div>
-          <h1>Avatar Studio</h1>
-        </div>
+<main class="shell">
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">↩</span><div><span class="eyebrow">CALLBACK</span><h1>Hybrid Avatar Studio</h1></div></div>
+    <p>Illustrated family faces + reusable animated bodies. Built to drop into the CALLBACK @Sites game.</p>
+  </header>
+
+  <section class="studio">
+    <aside class="preview-card">
+      <div class="preview-title"><div><span class="eyebrow">LIVE PREVIEW</span><h2 id="avatarName">Virginia</h2></div><span class="status" id="animStatus">Idle</span></div>
+      <div class="stage theme-cream" id="stage" aria-live="polite">
+        <div class="sprite-cell body-layer" id="bodyLayer" aria-hidden="true"></div>
+        <div class="head-window" id="headWindow"><div class="head-sprite" id="headLayer" aria-hidden="true"></div></div>
+        <div class="sprite-cell full-layer" id="fullLayer" aria-hidden="true"></div>
       </div>
-      <p class="tagline">Mii-like family avatars with enough detail to actually recognize the person.</p>
-    </header>
+      <div class="reactions" id="reactions"></div>
+    </aside>
 
-    <section class="studio-grid" aria-label="Avatar creator">
-      <section class="preview-panel">
-        <div class="preview-header">
-          <div>
-            <span class="eyebrow">LIVE PREVIEW</span>
-            <h2 id="avatarName">Custom Player</h2>
-            <p class="preset-note" id="presetNote">Start from scratch or choose a family look-alike.</p>
-          </div>
-          <span class="status-pill" id="statusPill">Idle</span>
-        </div>
+    <section class="editor-card">
+      <nav class="tabs" aria-label="Avatar editor sections">
+        <button class="tab active" data-tab="family">Family</button>
+        <button class="tab" data-tab="face">Face</button>
+        <button class="tab" data-tab="body">Body</button>
+        <button class="tab" data-tab="fine">Fine tune</button>
+      </nav>
 
-        <div class="avatar-stage" id="avatarStage" aria-live="polite"></div>
-
-        <div class="preview-actions">
-          <button class="button secondary" id="randomizeBtn" type="button">🎲 Randomize</button>
-          <button class="button ghost" id="resetBtn" type="button">Reset</button>
-          <button class="button primary" id="doneBtn" type="button">Done ✓</button>
-        </div>
-
-        <div class="quick-expression" aria-label="Quick reactions">
-          <span>Try a reaction</span>
-          <div class="reaction-row" id="quickReactions"></div>
-        </div>
-
-        <div class="saved-banner" id="savedBanner" role="status" aria-live="polite" hidden>
-          Avatar saved on this device and serialized for CALLBACK.
-        </div>
+      <section class="panel active" data-panel="family">
+        <div class="section-title"><div><span class="eyebrow">QUICK PICK</span><h3>Choose a family member</h3></div><p>Finished presets use the high-quality illustrated character art directly.</p></div>
+        <div class="grid family-grid" id="familyGrid"></div>
       </section>
 
-      <section class="controls-panel">
-        <div class="mode-tabs" role="tablist" aria-label="Avatar studio sections">
-          <button class="tab active" role="tab" aria-selected="true" aria-controls="createPanel" id="createTab" type="button">Create</button>
-          <button class="tab" role="tab" aria-selected="false" aria-controls="familyPanel" id="familyTab" type="button">Family</button>
-          <button class="tab" role="tab" aria-selected="false" aria-controls="animationPanel" id="animationTab" type="button">Animations</button>
+      <section class="panel" data-panel="face">
+        <div class="section-title"><div><span class="eyebrow">HYBRID HEAD</span><h3>Choose a face</h3></div><p>These illustrated heads stay separate so the body can move independently.</p></div>
+        <div class="grid head-grid" id="headGrid"></div>
+      </section>
+
+      <section class="panel" data-panel="body">
+        <div class="section-title"><div><span class="eyebrow">REUSABLE BODY</span><h3>Choose a body / outfit</h3></div><p>The body comes from the illustrated family artwork, with the original head hidden underneath.</p></div>
+        <div class="grid body-grid" id="bodyGrid"></div>
+      </section>
+
+      <section class="panel" data-panel="fine">
+        <div class="section-title"><div><span class="eyebrow">ALIGNMENT</span><h3>Fine tune</h3></div><p>Only a few controls are needed because the face artwork already carries the resemblance.</p></div>
+        <div class="sliders">
+          <label><span>Head size</span><input id="headSize" type="range" min="60" max="105" value="82"><output id="headSizeOut">82%</output></label>
+          <label><span>Horizontal</span><input id="headX" type="range" min="-45" max="45" value="0"><output id="headXOut">0px</output></label>
+          <label><span>Vertical</span><input id="headY" type="range" min="-40" max="60" value="0"><output id="headYOut">0px</output></label>
         </div>
-
-        <div class="tab-panel" id="createPanel" role="tabpanel" aria-labelledby="createTab">
-          <label class="field-label" for="playerName">Player name</label>
-          <input class="name-input" id="playerName" maxlength="18" value="Custom Player" autocomplete="off" />
-
-          <div class="edit-preview-dock" aria-label="Live avatar preview while editing">
-            <div class="edit-preview-avatar" id="editPreviewAvatar" aria-hidden="true"></div>
-            <div class="edit-preview-copy">
-              <span class="edit-preview-kicker">LIVE PREVIEW</span>
-              <div class="edit-preview-title"><span>Editing</span><strong id="editPreviewFeature">Face</strong></div>
-              <p class="edit-preview-hint" id="editPreviewHint">Shape, skin tone and proportions</p>
-            </div>
-          </div>
-
-          <div class="feature-nav" id="featureNav" aria-label="Avatar feature categories"></div>
-          <div class="editor-workspace" id="editorWorkspace"></div>
-        </div>
-
-        <div class="tab-panel" id="familyPanel" role="tabpanel" aria-labelledby="familyTab" hidden>
-          <div class="section-intro">
-            <span class="eyebrow">CHOOSE A LOOK-ALIKE</span>
-            <p>These 13 presets are tuned from the family photos you supplied. Tap one, then fine-tune anything you want in Create.</p>
-          </div>
-          <div class="preset-grid" id="presetGrid"></div>
-        </div>
-
-        <div class="tab-panel" id="animationPanel" role="tabpanel" aria-labelledby="animationTab" hidden>
-          <div class="section-intro">
-            <span class="eyebrow">ANIMATION LAB</span>
-            <p>The body is a lightweight SVG puppet. The same animation vocabulary works for every preset and custom avatar.</p>
-          </div>
-          <div class="animation-grid" id="animationGrid"></div>
-        </div>
+        <div class="theme-row" id="themes"></div>
+        <button class="primary" id="saveBtn" type="button">Use this avatar</button>
+        <div class="payload-wrap"><span class="eyebrow">CALLBACK PLAYER DATA</span><pre id="payload"></pre></div>
       </section>
     </section>
+  </section>
 
-    <section class="integration-card" aria-labelledby="integrationTitle">
-      <div class="integration-copy">
-        <span class="eyebrow">GAME INTEGRATION</span>
-        <h2 id="integrationTitle">Player payload</h2>
-        <p>CALLBACK only synchronizes this compact configuration. Each device rebuilds the SVG locally, so facial detail does not require image files.</p>
-      </div>
-      <pre class="payload" id="payloadPreview" tabindex="0"></pre>
-    </section>
-
-    <section class="lobby-demo" aria-labelledby="lobbyTitle">
-      <div class="lobby-heading">
-        <div>
-          <span class="eyebrow">CALLBACK LOBBY DEMO</span>
-          <h2 id="lobbyTitle">Family presets together</h2>
-        </div>
-        <button class="button secondary compact" id="addToLobbyBtn" type="button">Add current avatar</button>
-      </div>
-      <div class="lobby-grid" id="lobbyGrid"></div>
-    </section>
-
-    <footer class="research-note">
-      <strong>Editor design:</strong> inspired by the proven “choose a look-alike, then fine-tune” pattern used by Mii-style editors and modular SVG avatar libraries. CALLBACK artwork remains original and dependency-free.
-    </footer>
-  </main>
-
-  <script src="avatar-data.js"></script>
-  <script src="avatar-render.js"></script>
-  <script src="avatar-editor.js"></script>
-  <script src="avatar-polish.js"></script>
+  <section class="integration-note">
+    <div><span class="eyebrow">FOR @SITES</span><h2>Simple integration</h2></div>
+    <p>The game only stores a small avatar config. The artwork loads locally from the included sprite data and animations are CSS transforms—no image API is needed during play.</p>
+  </section>
+</main>
+  <script src="assets/family-data-01.js"></script>
+  <script src="assets/family-data-02.js"></script>
+  <script src="assets/family-data-03.js"></script>
+  <script src="assets/family-data-04.js"></script>
+  <script src="assets/family-data-05.js"></script>
+  <script src="assets/family-data-06.js"></script>
+  <script src="assets/head-data-01.js"></script>
+  <script src="assets/head-data-02.js"></script>
+  <script src="assets/head-data-03.js"></script>
+  <script src="assets/head-data-04.js"></script>
+  <script src="assets/head-data-05.js"></script>
+  <script src="avatar-assets.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
