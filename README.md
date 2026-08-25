@@ -1,42 +1,47 @@
 # CALLBACK Avatar Studio
 
-A mobile-first, layered SVG avatar system for CALLBACK.
+A mobile-first, layered SVG avatar system for CALLBACK. Version 2 focuses on family resemblance while keeping the characters simple, playful, and animation-friendly.
 
-## What is included
+## Avatar Studio v2
 
-- One universal puppet skeleton with independently animated head, arms, legs, face and accessories.
-- CALLBACK visual styling: navy/yellow UI, oversized cartoon heads, simple Mii-like recognition cues.
-- Modular SVG avatar parts for face shape, skin, hair, eyes, mouth, glasses, facial hair, outfits and accessories.
-- 13 family presets: Virginia, Gregory, Aaron, Liv, Danny, Kristin, Doug, Ruth, Judy, Brandon, Emily, Jaclyne and Alex.
-- Mobile-friendly avatar editor with Randomize, Reset and Done controls.
-- Reusable animations: idle, blink, look left/right, wave, think, laugh, shock, sad, cheer, point, dance and victory.
-- Small preset personality loops such as beard movement, glasses adjustment, curl bounce and hat movement.
-- A serialized player payload suitable for room synchronization.
-- A small lobby demo showing how avatars can replace simple player blobs.
-- `window.CallbackAvatar`, a dependency-free integration API for the future CALLBACK game client.
+- 13 hand-tuned family presets: Virginia, Gregory, Aaron, Liv, Danny, Kristin, Doug, Ruth, Judy, Brandon, Emily, Jaclyne and Alex.
+- A Mii-style **Choose a Look-Alike → Fine Tune** workflow.
+- Original CALLBACK SVG artwork; no third-party avatar art is bundled.
+- Modular face shapes, skin tones, age details, hairstyles, hair colours, brows, eyes, eye colours, noses, mouths, glasses, facial hair, outfits, hats and stackable extras.
+- Fine-tune controls for facial width/length, hairline, eyebrow height/angle/spacing, eye size/spacing/height/tilt, nose size/height, mouth width/height, glasses size/height, beard size and body proportions.
+- Stackable details such as freckles, earrings, necklaces, chokers and cross-body straps.
+- Reusable SVG puppet animations: idle, blink, look left/right, wave, think, laugh, shock, sad, cheer, point, dance and victory.
+- Small preset personality motion for curls, beards, glasses and hats.
+- Compact JSON player payload and `window.CallbackAvatar` integration API.
+- Responsive phone/desktop UI and a lobby demo containing all family presets.
 
-## Run locally
+## Architecture
 
-No build step is required. Open `index.html`, or serve this directory with any static web server.
+The editor follows a small-config / SVG-renderer architecture: each player stores only avatar settings, and the character is reconstructed locally. This keeps multiplayer payloads small and makes every avatar compatible with the same animation skeleton.
 
-## Integration API
+Files:
+
+- `avatar-data.js` — options, palettes, family presets and default config.
+- `avatar-render.js` — dependency-free SVG rendering engine.
+- `avatar-editor.js` — editor state, fine-tuning controls, presets, animations and integration API.
+- `avatar-v2.css` — responsive CALLBACK UI and puppet animations.
+- `index.html` — Avatar Studio interface.
+
+## Integration example
 
 ```js
 const player = CallbackAvatar.createPlayer('Danny', {
-  hair: 'sidepart',
+  faceShape: 'long',
+  hairStyle: 'sweptUp',
   hairColor: 'auburn',
-  accessory: 'freckles'
+  eyeColor: 'blue',
+  extras: ['freckles']
 });
 
-const html = CallbackAvatar.render(player.avatar, { animation: 'cheer' });
-container.innerHTML = html;
-CallbackAvatar.applyAnimation(container, 'victory');
+container.innerHTML = CallbackAvatar.render(player.avatar, {
+  animation: 'cheer',
+  label: player.name
+});
 ```
 
-Room data only needs the player's name and small `avatar` configuration. Every client can rebuild the SVG locally.
-
-## Current integration status
-
-This repository did not contain the existing CALLBACK multiplayer game code when the avatar studio was added. The editor therefore includes the player payload, rendering API and lobby demonstration needed for integration, but it cannot replace player objects or trigger round-specific reactions in code that is not present in this repository yet.
-
-When the main game client is moved into this repository, wire the avatar payload into the existing player/join message and call `CallbackAvatar.applyAnimation(...)` for waiting, voting, results, ties, zero-vote reactions and finale victory states.
+The existing CALLBACK multiplayer client is still separate from this repository, so the studio exposes the integration API and serialized player data needed for the eventual room/join wiring.
