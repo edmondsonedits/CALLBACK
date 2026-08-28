@@ -1,47 +1,37 @@
-# CALLBACK Avatar Studio
+# CALLBACK / King Prompter — Project Bible & Component Lab
 
-A mobile-first, layered SVG avatar system for CALLBACK. Version 2 focuses on family resemblance while keeping the characters simple, playful, and animation-friendly.
+This repository is the authoritative reference used to guide development of CALLBACK / King Prompter in ChatGPT Sites. It is **not** intended to be the production copy of the complete game.
 
-## Avatar Studio v2
+It has two jobs:
 
-- 13 hand-tuned family presets: Virginia, Gregory, Aaron, Liv, Danny, Kristin, Doug, Ruth, Judy, Brandon, Emily, Jaclyne and Alex.
-- A Mii-style **Choose a Look-Alike → Fine Tune** workflow.
-- Original CALLBACK SVG artwork; no third-party avatar art is bundled.
-- Modular face shapes, skin tones, age details, hairstyles, hair colours, brows, eyes, eye colours, noses, mouths, glasses, facial hair, outfits, hats and stackable extras.
-- Fine-tune controls for facial width/length, hairline, eyebrow height/angle/spacing, eye size/spacing/height/tilt, nose size/height, mouth width/height, glasses size/height, beard size and body proportions.
-- Stackable details such as freckles, earrings, necklaces, chokers and cross-body straps.
-- Reusable SVG puppet animations: idle, blink, look left/right, wave, think, laugh, shock, sad, cheer, point, dance and victory.
-- Small preset personality motion for curls, beards, glasses and hats.
-- Compact JSON player payload and `window.CallbackAvatar` integration API.
-- Responsive phone/desktop UI and a lobby demo containing all family presets.
+1. **Project Bible** — record approved product, gameplay, technical, visual and UX decisions so Sites has a stable source of truth.
+2. **Component Lab** — hold isolated working prototypes that can be tested and refined before they are integrated into the full game in Sites.
 
-## Architecture
+## Read this first
 
-The editor follows a small-config / SVG-renderer architecture: each player stores only avatar settings, and the character is reconstructed locally. This keeps multiplayer payloads small and makes every avatar compatible with the same animation skeleton.
+When using this repository to build or modify the game, read in this order:
 
-Files:
+1. [`SITE-GUIDE.md`](SITE-GUIDE.md) — rules for how Sites/AI should use this repository.
+2. [`CURRENT-STATE.md`](CURRENT-STATE.md) — concise snapshot of what is currently approved and active.
+3. [`decisions/APPROVED.md`](decisions/APPROVED.md) — authoritative decisions.
+4. Relevant files in [`bible/`](bible/) and [`design/`](design/).
+5. Relevant prototype in [`components/`](components/) when one exists.
 
-- `avatar-data.js` — options, palettes, family presets and default config.
-- `avatar-render.js` — dependency-free SVG rendering engine.
-- `avatar-editor.js` — editor state, fine-tuning controls, presets, animations and integration API.
-- `avatar-v2.css` — responsive CALLBACK UI and puppet animations.
-- `index.html` — Avatar Studio interface.
+If a prototype conflicts with the Bible, **the Bible wins** unless the user explicitly changes the decision.
 
-## Integration example
+## Repository map
 
-```js
-const player = CallbackAvatar.createPlayer('Danny', {
-  faceShape: 'long',
-  hairStyle: 'sweptUp',
-  hairColor: 'auburn',
-  eyeColor: 'blue',
-  extras: ['freckles']
-});
+- `bible/` — product, gameplay, architecture, UX, AI and creative-direction specifications.
+- `design/` — palette, recurring visual language and castle/host guidance.
+- `game-modes/` — approved rules and implementation guidance for individual modes as they are finalized.
+- `components/` — independent testable prototypes. These are references, not automatically production code.
+- `decisions/` — approved, open and deprecated decisions.
+- `archive/` — historical or rejected concepts retained only when useful for context.
 
-container.innerHTML = CallbackAvatar.render(player.avatar, {
-  animation: 'cheer',
-  label: player.name
-});
-```
+## Current component
 
-The existing CALLBACK multiplayer client is still separate from this repository, so the studio exposes the integration API and serialized player data needed for the eventual room/join wiring.
+`components/avatar-studio/` contains the existing Avatar Studio v2 prototype. It demonstrates the avatar configuration model, renderer, editor and animation vocabulary. Its local lobby and local-storage behavior are demo behavior and must not be mistaken for production multiplayer architecture.
+
+## Core principle
+
+CALLBACK should be developed vocabulary-first: identify the established technical pattern or mature library that fits generic infrastructure, keep CALLBACK-specific gameplay custom, and preserve a server-authoritative room-based multiplayer architecture with an explicit finite-state game lifecycle.
