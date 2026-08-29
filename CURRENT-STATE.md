@@ -48,7 +48,9 @@ The previous player-submitted theme/style ballot, two-winning-ingredient combina
 
 ## Current integration priority
 
-Update the Sites implementation to match the Bible, then verify lifecycle, asynchronous generation overlap, prompt-plus-image voting, scoring, reconnection, 3–10-player restoration masks, patch clipping/fallbacks and 15–20-minute real multiplayer pacing.
+King Prompter’s Sites implementation now contains the approved three-round lifecycle, all-ages request deck, optional three-choice early-finisher poll, overlapping Canvas One/Two generation schedule, one-favorite ballots, 100/150/300 scoring and provider-independent Royal Restoration compositor. Reusable torn-piece layouts cover 3–10 players and three base portraits rotate between matches. Automated lifecycle tests, TypeScript validation and the production build pass.
+
+The remaining gate is a real 4–6-player multiplayer playtest measuring 15–20-minute pacing, tutorial comprehension, generation dead time, laughter, vote confidence and final-collage legibility. Findings may tune timers and presentation copy without changing the approved rules.
 
 ## Removed modes
 
@@ -57,4 +59,3 @@ Do not restore Question Cards, Legacy Quick or Legacy Extended without explicit 
 ## Avatar reference
 
 Avatar Studio v2 remains an approved prototype/reference for compact configuration, local SVG reconstruction, presets, editor behavior and reusable reactions. Its fake lobby/local-storage behavior is not production multiplayer authority.
-
