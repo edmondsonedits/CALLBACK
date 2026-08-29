@@ -33,6 +33,29 @@ These decisions are authoritative until the user explicitly changes them.
 - Player-created prompts are optional and currently intended to be enabled by default.
 - Image generation is part of the broader game direction.
 
+## King Prompter mode — approved redesign
+
+The authoritative specification is in `game-modes/king-prompter/`. It is approved but not yet proof of integration in the live Sites game.
+
+Approved decisions:
+
+- The main source of fun is players competing through their creativity.
+- Target a 15–20-minute match.
+- Keep Canvas One, Canvas Two and the Crown Gallery.
+- Remove prompt-ranking phases and their score events.
+- During image voting, always show the originating prompt beside its generated image or controlled fallback.
+- Immediately after locking Canvas One, each player may submit one optional Canvas Two theme or art-style idea.
+- During Canvas One generation, players vote on a scalable anonymous mixture of curated and player-submitted Canvas Two choices.
+- Self-voting on a submitted Canvas Two choice is prohibited.
+- Reveal player authors only after the influence ballot.
+- Use the top two choices regardless of category and combine conflicting winners rather than replacing them.
+- Give winning player-submitted ingredients a small fixed bonus.
+- Canvas Two image voting is worth 1.5× Canvas One.
+- One winning position from each canvas reaches the Crown Gallery, and every image tied for either winning position advances.
+- The pigeon is presentation only and never judges, votes, scores or selects winners.
+- Pigeon teasing is host-adjustable, narration is used at key moments, and safe avatar spotlights may celebrate submissions, image wins and random harmless comedy moments.
+- Exact numeric point values, bonus amount, ballot-size formula and phase durations are balance variables to validate through multiplayer testing.
+
 ## Creative direction
 
 - Overarching world: **chaotic medieval castle game show**.
