@@ -10,21 +10,27 @@ These items are intentionally not treated as settled. Sites should not invent pe
 ## Game-mode specification
 
 - Final approved list of active game modes.
-- Exact rules, round counts, timing and scoring for each remaining mode where not yet documented.
+- Exact rules, round counts, timing and scoring for modes other than the approved King Prompter redesign where not yet documented.
 - Which castle room corresponds to each game mode.
+
+King Prompter's creative rules are now approved in `game-modes/king-prompter/`. Its exact base point values, small ingredient-bonus amount, scalable ballot formula and final phase durations remain playtest tuning variables rather than unresolved creative-direction decisions.
 
 ## AI / image generation
 
 - Final production model lineup and fallback policy.
 - Exact host-facing model-selection UX.
 - Production moderation/failure behavior and timeouts.
-- Whether image generation happens fully during another round, asynchronously from the player perspective, or through another approved pacing pattern.
+- Final asynchronous pacing strategy for modes other than the approved King Prompter redesign.
+
+For King Prompter, image generation is approved to overlap the Canvas Two influence ballot and pigeon-led TV presentation. AI and the pigeon remain non-authoritative.
 
 ## Audio / host performance
 
-- Final pigeon voice direction.
+- Final pigeon voice identity/performance.
 - Final music system and per-room music language.
-- Which reactions are voiced versus text-only.
+- Exact reaction library and production recordings.
+
+For King Prompter, narration at key moments, visible text for essential instructions and host-adjustable teasing are approved. Constant commentary is not the approved default.
 
 ## Production implementation
 
