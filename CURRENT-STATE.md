@@ -1,6 +1,6 @@
 # Current State
 
-_Last updated: 2026-08-28_
+_Last updated: 2026-08-29_
 
 ## Product identity
 
@@ -48,6 +48,34 @@ Core palette direction:
 - Submissions are not revealed early.
 - Scoring escalates in later rounds.
 - Game should blend skill and luck rather than reward only the naturally funniest player.
+
+## King Prompter approved redesign
+
+**Status:** APPROVED SPECIFICATION — NOT YET INTEGRATED IN SITES
+
+Authoritative documents:
+
+- `game-modes/king-prompter/RULES.md`
+- `game-modes/king-prompter/EXAMPLES.md`
+- `game-modes/king-prompter/IMPLEMENTATION.md`
+
+Approved direction:
+
+- target a 15–20-minute match centered on player creativity;
+- retain Canvas One, Canvas Two and the Crown Gallery;
+- remove prompt ranking;
+- show each original prompt beside its generated image during voting;
+- collect optional player theme/style ideas immediately after Canvas One prompt lock;
+- use Canvas One generation time for an anonymous, scalable mixture of curated and player-submitted Canvas Two choices;
+- block self-voting and reveal authors after the influence vote;
+- combine the top two choices regardless of category, including deliberately conflicting combinations;
+- award a small fixed bonus to player-authored winning ingredients;
+- make Canvas Two worth 1.5× Canvas One;
+- advance one winning position from each canvas and every image tied for either position;
+- keep the pigeon non-authoritative, with host-adjustable teasing and spoken narration at key moments; and
+- use safe avatar spotlights for submissions, image wins and random comedy moments.
+
+Exact numeric points, the ingredient-bonus amount, ballot scaling and final timing values require multiplayer balance tests. Do not claim this redesign is live until Sites is separately updated and verified.
 
 ## Removed / do not restore
 
