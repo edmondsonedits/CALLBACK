@@ -1,6 +1,6 @@
 # King Prompter — Implementation Contract
 
-**Status:** APPROVED SPECIFICATION — NOT YET INTEGRATED IN SITES
+**Status:** IMPLEMENTED IN SITES — AUTOMATED VERIFICATION PASSED; REAL MULTIPLAYER PLAYTEST PENDING
 
 This document tells an engineer or coding AI how to build the mode from no prior knowledge while preserving CALLBACK’s server-authoritative multiplayer architecture.
 
@@ -231,7 +231,7 @@ Assignment:
 3. Shuffle mask IDs with the room seed.
 4. persist `playerId -> maskId` before clients render.
 
-Generation pipeline:
+Preferred mask-capable generation pipeline:
 
 1. Send base image, player mask, exact player concept and safe style wrapper to a mask-capable image-edit/inpainting service.
 2. Require output dimensions identical to the base.
@@ -242,7 +242,20 @@ Generation pipeline:
 
 The immutable base is the source of truth. Never use one player’s output as the input base for the next player; sequential edits would allow drift and give later players unequal influence.
 
-If a selected image provider cannot perform mask edits, it may not be used for Restoration production without an adapter that still guarantees clipping and central preservation. A simple fallback may generate a patch-sized image from the prompt, crop it into the mask and apply seams; it must be labeled/tested as lower-coherence but remains playable.
+### Provider-independent torn-overlay adapter
+
+Royal Restoration must remain playable with image models that cannot edit a supplied base or mask. The approved adapter is:
+
+1. Generate one ordinary square image independently from each player prompt.
+2. Use a pre-authored 3–10-player layout record containing stable slot ID, percentage bounds, irregular polygon clip path, object position and slight rotation for every piece.
+3. Position the square beneath its assigned torn-section overlay and crop it with that exact clip path.
+4. Layer every clipped square above the immutable base portrait and below the final vignette/seam treatment.
+5. Never ask the provider to draw the King, the tear, a frame or transparency; those are deterministic presentation layers.
+6. Keep the central King in the base asset unchanged. No generated square becomes an input to another square.
+
+This adapter trades cross-piece visual continuity for provider compatibility, deterministic automation and the intentionally bad-collage joke. Every supported player count must be validated in advance, and incoming image dimensions/aspect ratios must be normalized before `object-fit: cover` cropping.
+
+The current Sites implementation ships three rotating 3:2 base portraits and reusable layouts for every player count from 3 through 10. Square patch generation uses the room-selected image model and the layout compositor applies the torn geometry at render time.
 
 ## Restoration presentation and vote targets
 
@@ -319,5 +332,4 @@ The TV chooses safe animation/audio from these events. It must not infer officia
 
 ## Integration gate
 
-Do not mark this specification integrated until the live Sites implementation has removed the old ingredient/top-two/Crown-revote flow, implements the lifecycle above, passes the required tests and completes at least one real multiplayer playtest. Solo/bot testing can verify mechanics but cannot validate the social-fun target.
-
+The live Sites implementation has removed the old prompt-ranking/Crown-revote lifecycle, added the request poll, overlapping canvas schedule, fixed 100/150/300 scoring, full tied-winner preservation and reusable Royal Restoration compositor. Automated lifecycle, type and production-build verification pass. Keep the product status **multiplayer playtest pending** until at least one real 4–6-player session confirms the 15–20-minute pacing and social-fun target; solo/bot testing verifies mechanics but not laughter, comprehension or room energy.
