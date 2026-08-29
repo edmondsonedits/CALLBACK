@@ -1,131 +1,87 @@
-# King Prompter — Examples
+# King Prompter — Rule Examples and Edge Cases
 
-**Status:** APPROVED REFERENCE EXAMPLES  
-These examples demonstrate the approved rules without fixing final balance numbers or content pools.
+Use `PLAYTHROUGH.md` for one complete match. These shorter examples remove ambiguity from individual rules.
 
-## Example 1 — Canvas One
+## Shared request, varied answers
 
-Player prompt:
+King’s request:
 
-> A royal corgi operating a failing moon cheese factory.
+> **A portrait of the King’s mysterious childhood pet.**
 
-The generated image and this exact prompt appear together on every image-voting card. Voters can reward the player's idea even if the model interprets one detail poorly, or reward a different entry whose prompt and image work better as a pair.
+Valid player prompts can differ completely:
 
-The prompt is not separately ranked before generation.
+- A fat squirrel sitting on a pile of candy wrappers and junk food.
+- A tiny dragon wearing knitted booties, sleeping inside the King’s crown.
+- An elderly goldfish commanding a toy navy from an elaborate crystal bowl.
+- Three raccoons in a robe pretending to be one sophisticated royal hound.
 
-## Example 2 — Mixed Canvas Two ballot
+The request supplies a common comparison; it does not dictate the joke.
 
-In a six-player room, the server assembles a ballot from curated choices and eligible player suggestions.
+## Prompt length
 
-Example anonymous ballot:
+- Nineteen words: accepted if otherwise valid.
+- Twenty words: rejected with a private “Use fewer than 20 words” message.
+- Client and server use the same visible count when possible, but the server count is official.
 
-- A daycare for nervous dragons — player-submitted theme
-- A grand historical painting of a petty argument — curated style
-- An underwater royal wedding with no budget — player-submitted theme
-- Handmade stop-motion felt — curated style
-- A medieval customer-service desk during a crisis — player-submitted theme
-- A suspicious 1980s advertisement — curated style
+## Optional poll
 
-Players see only the choice text during voting. They cannot vote for their own submitted choice.
+Choices receive 2, 1 and 0 votes: the 2-vote choice wins.
 
-Suppose the winners are:
+Choices A and B each finish with 2 votes. A reached 2 accepted votes at 20:15:04; B reached 2 at 20:15:07. A wins. Submission speed and prompt-lock speed are irrelevant.
 
-1. A daycare for nervous dragons
-2. A grand historical painting of a petty argument
+All choices receive 0 votes: the server guesses one choice using room-seeded randomness. The TV may animate the pigeon pulling a sealed scroll, but the pigeon did not make an authoritative decision.
 
-Canvas Two combines them into one shared direction:
+## Prompt and image judged together
 
-> Create a visual prompt about a daycare for nervous dragons, presented like a grand historical painting of a petty argument.
+During voting, a card always contains both:
 
-After voting, the game reveals which winning choice was player-submitted and credits that player with the approved small fixed bonus.
+> **Prompt:** The King rescuing a village by accidentally falling onto the attacking dragon.
 
-## Example 3 — Two themes win
+and its resulting image. If the image misses a detail, the room decides whether the underlying idea still deserves the vote. The system does not separately rank prompts or automatically compensate the author.
 
-Winning choices:
+## Round winner tie
 
-- A castle kitchen during an impossible dinner rush
-- Tiny ghosts starting their first job
+Two Round One paintings each receive three votes, more than every other entry. Both earn 300 points and both are framed in the Crown Gallery. There is no hidden tie-breaker.
 
-Both are themes, but they still combine:
+## Restoration at different player counts
 
-> Create a visual prompt about tiny ghosts starting their first job in a castle kitchen during an impossible dinner rush.
+- 3 players: load the reviewed 3-mask portrait and assign one mask each.
+- 6 players: load the reviewed 6-mask portrait and assign one mask each.
+- 10 players: load the reviewed 10-mask portrait and assign one mask each.
 
-The system does not replace one winner merely because no art style won.
+Do not take a 10-mask template and leave random holes for a 6-player room. Every supported count has a complete, balanced layout.
 
-## Example 4 — Two styles win
+## Restoration mismatch
 
-Winning choices:
+One player paints a realistic bear, another creates a flat cartoon Queen and a third creates a glowing fantasy portal. Keep those differences. Clip each patch to its torn mask, preserve the central King and apply the common seam overlay. Do not harmonize every section into one style; visual disagreement is the finale’s payoff.
 
-- Cheap medieval safety manual
-- Dramatic stained-glass window
+## Restoration vote tie
 
-Canvas Two deliberately keeps both:
+Two sections each receive two Royal Seals. Both authors receive 600 points and both sections receive Best Restoration highlighting. The complete portrait is still framed only once.
 
-> Create a visual prompt rendered as a cheap medieval safety manual presented through an excessively dramatic stained-glass window.
+## Overall score tie
 
-The contradiction is part of the comedy.
+Two players finish at 750. Both receive crowns/co-champion treatment. Do not break the tie with submission speed, poll participation, model quality, pigeon preference or randomness.
 
-## Example 5 — Conflicting winners
+## Generation failure
 
-Winning choices:
+For Round One/Two, show a controlled concept-card fallback containing the exact prompt and keep it voteable.
 
-- Minimalist black-and-white courtroom sketch
-- Overloaded rainbow toy commercial
+For Restoration, fill the assigned mask with a deliberate parchment repair/fallback, preserve its prompt as the voteable contribution and complete the collage. The failure itself neither awards nor removes points.
 
-Do not silently discard or sanitize either winner. Present the collision clearly:
+## Safe pigeon behavior
 
-> Create a visual prompt combining a minimalist black-and-white courtroom sketch with an overloaded rainbow toy commercial.
+Allowed:
 
-Players compete to make the contradiction usable.
-
-## Example 6 — Pigeon presentation during generation
-
-Allowed television moments:
-
-- The pigeon pulls a lever labelled ART DEPARTMENT and the wrong curtain opens.
-- The pigeon previews each ingredient card while castle workers hang them crookedly.
-- As votes arrive, the pigeon becomes increasingly overconfident without indicating which choice is leading.
-- A submitting player's avatar briefly carries an enormous paintbrush across the stage.
-- Two random avatars operate a pulley while the pigeon gives unhelpful instructions.
-- The winning image appears and the pigeon attempts to place the crown on it, misses, then corrects itself.
+- Pigeon struggles to hang an oversized frame.
+- Avatar carries an enormous paintbrush after locking.
+- Pigeon jokes that the King’s records were lost in a convenient fire.
+- Pigeon reacts to “three of five artists finished” without identifying slow players.
 
 Not allowed:
 
-- The pigeon endorses an ingredient before voting closes.
-- The pigeon reveals the current leader.
-- The pigeon casts a hidden vote.
-- The pigeon mocks a player for submitting slowly, losing, disconnecting or using accessibility settings.
+- Revealing the poll or vote leader.
+- Endorsing an entry before voting closes.
+- Mocking a named player for being slow, losing, disconnecting or using accessibility settings.
+- Casting a vote or selecting a winner.
 
-## Example 7 — Tied Canvas winner
-
-If two Canvas One images finish tied for the highest official image-vote score, both advance.
-
-If Canvas Two has one clear winner, the Crown Gallery contains three finalists:
-
-- Canvas One tied winner A
-- Canvas One tied winner B
-- Canvas Two winner
-
-The tie is visible and celebrated; the server does not silently remove one tied winner to preserve a two-image final.
-
-## Example 8 — Host-adjustable teasing
-
-Possible host-facing tone levels can be implemented without changing game rules:
-
-- Gentle: celebratory reactions and mild production mishaps
-- Cheeky: playful self-important remarks and light teasing
-- Roast: sharper but still harmless party-safe jokes
-
-The exact labels are implementation copy. Every level must avoid protected traits, appearance-based insults, humiliating personal information and punishment for game performance.
-
-## Example 9 — Generation failure
-
-If an image fails:
-
-- show the original prompt;
-- show a controlled concept-card fallback;
-- keep the entry eligible;
-- allow the room to judge the prompt/fallback combination; and
-- continue the same authoritative voting and scoring flow.
-
-The failure never awards or removes points by itself.

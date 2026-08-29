@@ -1,43 +1,42 @@
 # Open Decisions
 
-These items are intentionally not treated as settled. Sites should not invent permanent answers to them unless necessary for a prototype; temporary assumptions must be labeled.
+These are not settled. An implementation may use a clearly labeled temporary prototype value, but must not present it as approved permanence.
 
-## Naming / branding
+## Naming and product structure
 
-- Whether the final public product name is CALLBACK, King Prompter, or another approved final name.
-- How CALLBACK and King Prompter should coexist if both names remain useful (product, mode, universe, internal project name, etc.).
+- Whether the public product is CALLBACK, King Prompter or another name.
+- Whether CALLBACK is the collection/universe and King Prompter is one mode.
 
-## Game-mode specification
+## Other modes
 
-- Final approved list of active game modes.
-- Exact rules, round counts, timing and scoring for modes other than the approved King Prompter redesign where not yet documented.
-- Which castle room corresponds to each game mode.
+- Final list and exact rules of modes other than King Prompter.
+- Castle room associated with each mode.
 
-King Prompter's creative rules are now approved in `game-modes/king-prompter/`. Its exact base point values, small ingredient-bonus amount, scalable ballot formula and final phase durations remain playtest tuning variables rather than unresolved creative-direction decisions.
+## AI/image production
 
-## AI / image generation
+- Final production model lineup and host-facing model-selection UX.
+- Exact moderation provider, job timeout values, retry count, storage and retention policy.
+- Which production image-edit/inpainting model will power Royal Restoration.
+- Whether non-inpainting models remain selectable for Rounds One/Two only or use the documented lower-coherence restoration adapter.
 
-- Final production model lineup and fallback policy.
-- Exact host-facing model-selection UX.
-- Production moderation/failure behavior and timeouts.
-- Final asynchronous pacing strategy for modes other than the approved King Prompter redesign.
+King Prompter’s required behavior is settled even though provider selection is not: image jobs are non-authoritative; R1 overlaps R2 writing; R2 overlaps R1 voting; restoration outputs are clipped to assigned masks; controlled fallbacks keep entries voteable.
 
-For King Prompter, image generation is approved to overlap the Canvas Two influence ballot and pigeon-led TV presentation. AI and the pigeon remain non-authoritative.
+## Content production
 
-## Audio / host performance
+- Final size and editorial review process for the King’s request pool.
+- Final number of restoration base portraits and seasonal variants.
+- Final recorded pigeon voice, music library and complete joke/reaction library.
 
-- Final pigeon voice identity/performance.
-- Final music system and per-room music language.
-- Exact reaction library and production recordings.
+## Production infrastructure
 
-For King Prompter, narration at key moments, visible text for essential instructions and host-adjustable teasing are approved. Constant commentary is not the approved default.
+- Final hosting/backend stack used by Sites.
+- Exact realtime transport, validation, durable-room-state and reconnect libraries where architecture permits choice.
 
-## Production implementation
+## Playtest tuning
 
-- Final hosting/backend stack used by the full Sites version.
-- Exact reconnect/session persistence mechanism.
-- Exact library choices for realtime transport, validation and durable room state where Sites architecture allows choice.
+The approved defaults are 120-second R1/R2 writing, 90-second restoration writing and 45-second votes. These may be tuned only after real multiplayer measurement while keeping the 15–20-minute target and the rule that optional activity never blocks advancement.
 
-## Component promotion
+## Integration status
 
-A component may move from PROTOTYPE to APPROVED only after its behavior is reviewed against the Bible. A component may move to INTEGRATED only when the production/Sites implementation is confirmed to use it or an equivalent contract.
+King Prompter’s rules are approved, but the Sites version is not considered integrated until it implements and verifies the Bible contract. Components move from PROTOTYPE to APPROVED through review, and to INTEGRATED only after production confirmation.
+

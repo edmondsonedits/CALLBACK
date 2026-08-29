@@ -2,213 +2,322 @@
 
 **Status:** APPROVED SPECIFICATION — NOT YET INTEGRATED IN SITES
 
-This document describes how to integrate the approved redesign without weakening CALLBACK's server-authoritative architecture.
+This document tells an engineer or coding AI how to build the mode from no prior knowledge while preserving CALLBACK’s server-authoritative multiplayer architecture.
 
-## Authority boundary
+## Architectural rule
 
-The server owns:
+King Prompter is a **server-authoritative, room-based multiplayer game with an explicit finite-state lifecycle**.
 
-- active players and stable identity;
-- current phase and deadlines;
-- Canvas One and Canvas Two prompts;
-- optional ingredient suggestions and authorship;
-- ingredient-ballot construction and eligibility;
-- ingredient votes and the top-two result;
-- image jobs and controlled fallbacks;
-- image-vote eligibility and ballots;
-- score events;
-- canvas winners, tied winners and Crown Gallery finalists; and
-- final scores and champions.
+The server owns official identity, active-player set, phase, deadlines, request choices, prompts, generation jobs, restoration assignments, voting eligibility, votes, score ledger, winners and final results. Clients render snapshots and submit idempotent actions. The pigeon, animation, audio and generated media never mutate rules by themselves.
 
-Clients render snapshots and request actions. The pigeon, animation, narration and avatar reactions are presentation only.
+## Required authoritative states
 
-## Conceptual phase flow
+Exact enum names may follow the codebase, but these states must exist semantically:
 
-Exact enum names may follow the existing lifecycle, but the authoritative sequence must represent these states explicitly:
+```text
+LOBBY
+TUTORIAL
+ROUND_1_INTRO
+ROUND_1_SUBMIT
+ROUND_2_COUNTDOWN
+ROUND_2_SUBMIT
+ROUND_1_VOTE
+ROUND_1_RESULTS
+ROUND_2_VOTE
+ROUND_2_RESULTS
+RESTORATION_INTRO
+RESTORATION_SUBMIT
+RESTORATION_GENERATE
+RESTORATION_VOTE
+RESTORATION_RESULTS
+FINAL_RESULTS
+```
 
-1. Room setup and lobby
-2. Canvas One intro
-3. Canvas One prompt submission
-4. Per-player optional Canvas Two ingredient submission after prompt lock
-5. Canvas One generation plus Canvas Two ingredient voting
-6. Ingredient result/author reveal
-7. Canvas One image voting
-8. Canvas One results
-9. Canvas Two intro with both winning ingredients
-10. Canvas Two prompt submission
-11. Canvas Two generation/pigeon waiting presentation
-12. Canvas Two image voting
-13. Canvas Two results
-14. Crown Gallery voting
-15. Final results/game over
+The early-finisher poll is parallel per-player activity inside `ROUND_1_SUBMIT`, not a blocking global phase.
 
-Do not recreate prompt ranking as a hidden compatibility phase or fallback.
+## Transition contract
 
-## Parallel per-player submission behavior
+```text
+LOBBY -> TUTORIAL or ROUND_1_INTRO
+TUTORIAL -> ROUND_1_INTRO
+ROUND_1_INTRO -> ROUND_1_SUBMIT
+ROUND_1_SUBMIT -> ROUND_2_COUNTDOWN
+ROUND_2_COUNTDOWN -> ROUND_2_SUBMIT
+ROUND_2_SUBMIT -> ROUND_1_VOTE
+ROUND_1_VOTE -> ROUND_1_RESULTS
+ROUND_1_RESULTS -> ROUND_2_VOTE
+ROUND_2_VOTE -> ROUND_2_RESULTS
+ROUND_2_RESULTS -> RESTORATION_INTRO
+RESTORATION_INTRO -> RESTORATION_SUBMIT
+RESTORATION_SUBMIT -> RESTORATION_GENERATE
+RESTORATION_GENERATE -> RESTORATION_VOTE
+RESTORATION_VOTE -> RESTORATION_RESULTS
+RESTORATION_RESULTS -> FINAL_RESULTS
+```
 
-A player who locks a Canvas One prompt may immediately receive the optional ingredient field while other players are still writing.
+Only the server transition function advances state. Deadlines and “all required players resolved” are server facts. Animation completion may acknowledge a server transition but cannot originate one.
 
-Requirements:
+## Starting defaults
 
-- Prompt lock remains final under the normal rules.
-- Ingredient submission is optional and separately validated.
-- A player may submit at most one ingredient for the match.
-- Repeated requests with the same action ID are idempotent.
-- Refreshing restores whether the player already submitted or skipped.
-- Ingredient authorship remains private until after the ballot result.
-- The room advances when required prompt work is complete or the server deadline expires; optional ingredient work must not indefinitely block the game.
+These are approved default balance values and should be configurable on the server:
 
-## Ingredient ballot construction
+| Setting | Default |
+|---|---:|
+| Players | 3–10 |
+| Tutorial | 30–45 seconds; skippable |
+| Round One writing deadline | 120 seconds |
+| Round Two countdown | 3 seconds |
+| Round Two writing deadline | 120 seconds |
+| Round One vote deadline | 45 seconds |
+| Round Two vote deadline | 45 seconds |
+| Restoration writing deadline | 90 seconds |
+| Restoration vote deadline | 45 seconds |
+| All-votes-received closing countdown | 3 seconds |
+| Prompt maximum | fewer than 20 words |
+| Round One points | 100 per received vote |
+| Round Two points | 150 per received vote |
+| Restoration points | 300 per Royal Seal |
 
-Approved principles:
+The 15–20-minute target is a product acceptance target, not a requirement to add artificial waiting. End writing/voting early under the rules when all required actions resolve.
 
-- Combine curated built-in choices and eligible player submissions.
-- Scale total ballot size with active player count.
-- Preserve variety where possible without guaranteeing one winner from each category.
-- Keep authorship hidden during voting.
-- Block self-voting on a player's own ingredient.
-- Select exactly two winning choices.
-- Reveal player authors after the result.
-- Award the approved small fixed bonus to each player-authored winning ingredient.
-- If the same player authors both winning ingredients in a future rule variant, score-event deduplication and the approved reward policy must be explicit before enabling it.
+## Minimum domain model
 
-### Tunable starting formula
+Stable IDs are required; labels and array positions are not identities.
 
-The exact formula is a balance value, not a pending human creative decision. A safe prototype may begin with:
+```text
+Room
+  id, seed, phase, phaseVersion, deadline, settings
+  activePlayerIds[]
+  round1RequestId
+  round2PollChoiceIds[3]
+  round2PollResultId
+  restorationTemplateId
+  restorationAssignments{playerId -> maskId}
 
-- total ballot choices = clamp(active players + 2, 4, 8);
-- at least two curated choices when the pool permits;
-- sample eligible player suggestions deterministically when submissions exceed available slots; and
-- fill every missing slot from the curated pool.
+Player
+  id, stableSessionId, displayName, avatarConfig, connected, active
 
-This formula must be validated at 3, 6 and 10 players and may change without altering the approved design principle.
+PromptSubmission
+  id, roomId, round, playerId, exactText, normalizedWordCount
+  status, lockedAt, moderationState
 
-### Ingredient ranking ties
+PollVote
+  roomId, playerId, choiceId, updatedAt, actionId
 
-Exactly two choices must be produced for Canvas Two. Use a documented deterministic server-side tiebreaker after official vote totals, such as:
+ImageJob
+  id, roomId, submissionId, kind
+  provider/model, status, startedAt, completedAt, assetId, fallbackReason
 
-1. more first-choice votes;
-2. more total weighted points;
-3. stable room-seeded selection among still-tied choices.
+RestorationPatch
+  roomId, playerId, maskId, submissionId, imageJobId, clippedAssetId
 
-Do not use submission speed.
+Vote
+  roomId, phaseVersion, voterPlayerId, targetEntryId, actionId, castAt
 
-## Canvas Two brief assembly
+ScoreEvent
+  uniqueKey, roomId, playerId, sourceType, sourceId, points
+```
 
-- Preserve both winning ingredient texts.
-- Do not ask AI or the pigeon to replace a contradictory winner.
-- Apply only minimal structural joining text needed to make a prompt instruction.
-- Store the original winning choices separately from the combined brief.
-- Show both winners clearly on the host and phone screens.
-- Treat player-submitted ingredient text as untrusted content.
+Store exact player text separately from any sanitized model prompt wrapper. Voting always displays the approved exact player text, not hidden provider instructions.
 
-## Image voting UI contract
+## Client actions
 
-Every candidate card must display:
+At minimum:
 
-- the generated image or controlled fallback;
-- the exact originating player prompt; and
-- voting state/rank controls.
+- `readyTutorial(actionId)`
+- `lockRoundPrompt(round, text, actionId)`
+- `setEarlyPollVote(choiceId | null, actionId)`
+- `castImageVote(round, entryId, actionId)`
+- `lockRestorationPrompt(text, actionId)`
+- `castRestorationVote(patchId, actionId)`
 
-During voting:
+Every action validates room, stable player identity, phase/phaseVersion, deadline, eligibility, payload shape and whether the action has already been consumed. Retries with the same action ID return the prior result without duplicate side effects.
 
-- keep author identity hidden;
-- visibly disable the voter's own entry;
-- do not reveal vote totals or current leader;
-- preserve the same ordering rules for reconnects; and
-- keep the prompt readable without requiring a hidden detail screen.
+## Prompt validation
 
-This paired prompt-and-image presentation allows the room to decide case by case whether the idea, image execution or combination deserves the vote.
+- Count words with one shared server function. Client counts are advisory.
+- Valid length is 1–19 words.
+- Trim surrounding whitespace and normalize unsafe control characters without rewriting the player’s wording.
+- Run the approved safety/moderation pipeline.
+- Reject privately with a usable reason while time remains.
+- Once locked, a prompt is immutable.
+- At deadline, an unresolved player receives a controlled safe fallback submission and remains part of the flow.
 
-## Scoring contract
+## Round request selection
 
-- Delete or disable prompt-ranking score events for this mode.
-- Keep Canvas One image values as the base.
-- Derive Canvas Two values as 1.5× the equivalent Canvas One values.
-- Use integer point values; choose base values that make the 1.5 multiplier exact or define an explicit rounding rule.
-- Use a small fixed ingredient-win bonus that cannot outweigh a strong image-vote performance.
-- Keep the Crown Gallery as the largest single competitive reward.
-- Use uniquely keyed score events for every awarded vote rank, ingredient bonus and final vote.
-- Official totals come only from the server score ledger.
+Round One:
 
-Exact base points and bonus points are balance variables to test, not permanent values inferred by a client.
+- Select one eligible curated request using the room seed and recent-content exclusion.
+- Store its stable content ID and rendered text.
 
-## Finalist contract
+Round Two poll:
 
-- Record every highest-scoring image for each canvas.
-- Add all tied highest scorers from Canvas One.
-- Add all tied highest scorers from Canvas Two.
-- Deduplicate by stable answer/image identity.
-- The Crown Gallery may therefore contain more than two entries.
-- Final vote requirements must shrink safely when self-voting leaves a player with fewer eligible finalists.
-- Preserve overall-score co-champions.
+- Select exactly three distinct eligible request IDs before `ROUND_1_SUBMIT` begins.
+- Use the diversity rules in `CONTENT.md`.
+- Keep one room-wide display order.
+- Persist choices so reconnects see the same ballot.
 
-## Pigeon and avatar presentation
+## Early-finisher poll algorithm
 
-Host-adjustable teasing changes only presentation copy/animation selection.
+Eligibility begins only after that player successfully locks Round One and ends when `ROUND_1_SUBMIT` closes.
 
-The pigeon may react to:
+- Vote is optional and carries no score.
+- A player may set/change/clear one vote while open.
+- Never expose live totals.
+- Closing Round One atomically closes the poll and resolves its result.
 
-- an individual prompt lock;
-- aggregate ingredient-vote progress;
-- ingredient-choice reveal;
-- image-generation progress;
-- random safe avatar cameos; and
-- canvas/final victories.
+Resolution:
 
-Spoken narration is limited to key moments. Essential instructions and results require visible captions/text. Presentation must respect reduced-motion and audio settings.
+1. Count valid votes per choice.
+2. If every count is zero, select one of all three with deterministic room-seeded pseudorandom choice and record `resolution = guessed_no_votes`.
+3. If one choice has the unique maximum, select it.
+4. If choices tie for a non-zero maximum, compare when each tied choice first reached its final maximum count; earliest wins.
+5. If event timestamps are identical at storage precision, use stable room-seeded selection among those still tied.
 
-Random comedy moments must be derived from safe presentation selection, not private player data or hidden vote totals.
+This “first to reach the tied total” rule uses authoritative accepted-vote timestamps, never client clocks.
 
-## Failure behavior
+## Generation scheduling
 
-- If player suggestions are missing or invalid, fill ballot slots with curated choices.
-- If an image job fails or misses its deadline, attach a controlled fallback to the original prompt and keep it voteable.
-- If narration fails, continue with text and animation.
-- If an avatar cannot render, use a safe default.
-- If a client disconnects, preserve the player's consumed actions and restore the current snapshot on reconnect.
-- AI and presentation failure cannot advance phases, decide finalists or mutate scores outside approved server transitions.
+Round One and Round Two jobs start per player immediately after safe prompt lock. Do not wait for a batch.
 
-## Separation from shared infrastructure
+- Round One jobs continue through the early poll, countdown and Round Two writing.
+- Round Two jobs continue through Round One voting/results.
+- Before opening a vote, resolve every entry to either a generated asset or controlled fallback.
+- Use a bounded wait/hard deadline. Presentation fills short gaps; it does not create an unbounded phase.
+- Preserve one voteable entry per active player even when generation fails.
 
-Keep shared:
+Do not award quality scores from the model, regenerate based on perceived funniness or let provider metadata affect rank.
 
-- room/session identity;
-- synchronization;
-- deadlines;
-- action validation/deduplication;
-- score ledger;
-- image-job/media pipeline;
-- reconnect behavior; and
-- common host/phone primitives.
+## Image voting
 
-Keep King Prompter-specific:
+Create a stable candidate order per voter/phase and preserve it across reconnects. The order may be room-seeded and rotated to reduce position bias.
 
-- three-part round plan;
-- ingredient suggestion and ballot state;
-- two-winner combination rule;
-- prompt-plus-image voting presentation;
-- 1.5× Canvas Two scoring;
-- tied-finalist advancement; and
-- mode-specific pigeon cues.
+Validation:
 
-Do not build a universal game-description language solely for this redesign. Extract only boundaries already supported by multiple real modes.
+- voter is active and eligible;
+- target belongs to the current round;
+- target is voteable;
+- target is not the voter’s own entry;
+- one accepted vote per voter per phaseVersion;
+- action is before deadline.
 
-## Integration and verification gates
+When all eligible votes arrive, start the server-owned three-second close countdown. Do not accept changes after the vote is locked. At deadline, missing voters abstain.
 
-Before marking this mode INTEGRATED:
+Score ledger:
 
-- update the live Sites implementation;
-- remove prompt ranking from UI, engine, snapshots and scoring;
-- confirm the original prompt appears beside every voting image;
-- test ingredient submission, anonymity, no-self-voting and author reveal;
-- test ballot construction at 3, 6 and 10 players;
-- test two-theme, two-style and conflicting-winner combinations;
-- test Canvas Two 1.5× scoring and integer rounding;
-- test tied winners from either and both canvases;
-- test reconnects and duplicate actions in every new phase;
-- test missing suggestions and failed images;
-- verify a normal real-player match can finish in 15–20 minutes; and
-- conduct real 4–6-player laughter, comprehension and pacing tests.
+- Round One: one `R1_VOTE_RECEIVED:<voteId>` event worth 100 to target author.
+- Round Two: one `R2_VOTE_RECEIVED:<voteId>` event worth 150.
+- Restoration: one `R3_SEAL_RECEIVED:<voteId>` event worth 300.
+- Unique keys make scoring idempotent.
 
-Solo/bot tests may verify mechanics but cannot prove the social-fun target.
+Winner set for Rounds One/Two = every entry with the maximum received vote count. If zero votes are possible, either every zero-vote entry ties or the presentation may label the round “No gallery favourite”; do not invent votes. For ordinary 3+ active-player play, self-vote restrictions still leave eligible targets.
+
+## Restoration template system
+
+Provide reviewed templates for each supported active-player count from 3 through 10. Each template includes:
+
+- immutable base portrait asset;
+- immutable central-preservation mask;
+- exactly N non-overlapping editable masks;
+- patch bounds/context previews;
+- final gold-seam overlay;
+- mask-area metrics proving roughly equal prominence; and
+- deterministic compositing order.
+
+Assignment:
+
+1. Freeze authoritative active-player set before `RESTORATION_INTRO`.
+2. Load the matching N-player template.
+3. Shuffle mask IDs with the room seed.
+4. persist `playerId -> maskId` before clients render.
+
+Generation pipeline:
+
+1. Send base image, player mask, exact player concept and safe style wrapper to a mask-capable image-edit/inpainting service.
+2. Require output dimensions identical to the base.
+3. On return, discard every pixel outside the assigned mask.
+4. Store the clipped patch.
+5. Composite clipped patches over the immutable base in documented order.
+6. Apply seam overlay last.
+
+The immutable base is the source of truth. Never use one player’s output as the input base for the next player; sequential edits would allow drift and give later players unequal influence.
+
+If a selected image provider cannot perform mask edits, it may not be used for Restoration production without an adapter that still guarantees clipping and central preservation. A simple fallback may generate a patch-sized image from the prompt, crop it into the mask and apply seams; it must be labeled/tested as lower-coherence but remains playable.
+
+## Restoration presentation and vote targets
+
+- Composite one final image asset for the TV.
+- Keep each patch as a separately addressable vote target with stable patch/submission ID.
+- Store outline geometry so TV/phone can highlight the same section.
+- During voting, show the complete image, selected section outline and exact prompt.
+- Do not reveal author until results.
+- Block own patch.
+- Highest vote count receives Best Restoration; retain all tied top patches.
+- The final gallery stores the complete composite once, with winner-patch metadata, rather than storing each patch as a separate framed painting.
+
+## Presentation event contract
+
+The server may emit semantic events such as:
+
+- `PLAYER_PROMPT_LOCKED`
+- `POLL_CLOSED`
+- `IMAGE_JOB_PROGRESS_AGGREGATE`
+- `VOTE_CLOSE_COUNTDOWN_STARTED`
+- `ROUND_WINNERS_REVEALED`
+- `RESTORATION_COMPOSITE_READY`
+- `CHAMPIONS_REVEALED`
+
+The TV chooses safe animation/audio from these events. It must not infer official results from local visuals or job completion order. Tease setting affects only copy/animation selection. Narration failure falls back to visible text.
+
+## Reconnection and departures
+
+- Reconnect restores the same player ID, current snapshot, locked text, poll choice, vote state, restoration assignment and score.
+- Locked actions remain locked.
+- Before Restoration assignments, an authoritative departure may change N and therefore template selection.
+- After assignment, keep the mask and resolve it through the player’s submission or fallback even if disconnected.
+- Host removal/room cancellation follows shared CALLBACK policy; King Prompter does not invent a parallel session system.
+
+## Security and privacy
+
+- Treat names, prompts and content IDs as untrusted input.
+- Authorize every action against room membership.
+- Rate-limit submission/vote endpoints.
+- Keep provider credentials server-side.
+- Do not expose unmoderated text to other clients.
+- Do not use hidden vote totals, private text or player profile data to generate pigeon jokes.
+
+## Required test matrix
+
+### Rules
+
+- 3, 4, 6 and 10 players complete the full lifecycle.
+- Round One/Two prompt limit accepts 19 words and rejects 20.
+- Poll opens only after personal lock and never blocks transition.
+- Poll resolves unique win, non-zero tie by first-to-reach, identical-timestamp fallback and zero-vote guess.
+- R1 generation overlaps R2 writing; R2 generation overlaps R1 vote.
+- Self-voting is rejected in all three votes.
+- Prompts remain visible beside every image/patch.
+- Scoring is exactly 100/150/300 per received vote and never duplicates on retries.
+- Tied round winners all enter the gallery; tied Best Restoration patches all receive the title; tied overall leaders are co-crowned.
+
+### Restoration
+
+- Every N from 3–10 loads exactly N masks.
+- Masks do not overlap, stay outside immutable centre and have acceptably similar area/prominence.
+- Malicious/incorrect provider output cannot alter pixels outside its assigned mask.
+- Composition order is deterministic.
+- Failed patch produces a visible, voteable fallback and full composite.
+- Outline hit targets match rendered masks on common phone sizes.
+
+### Resilience and UX
+
+- Refresh/reconnect in every state restores exact action status.
+- Duplicate actions are idempotent.
+- Slow/failed image, narration and avatar assets cannot block completion.
+- Reduced motion, mute and captions preserve all essential information.
+- Real 4–6-player tests finish in 15–20 minutes and measure instruction comprehension, dead time, laughter, vote confidence and whether the finale remains legible.
+
+## Integration gate
+
+Do not mark this specification integrated until the live Sites implementation has removed the old ingredient/top-two/Crown-revote flow, implements the lifecycle above, passes the required tests and completes at least one real multiplayer playtest. Solo/bot testing can verify mechanics but cannot validate the social-fun target.
+

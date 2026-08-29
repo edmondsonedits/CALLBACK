@@ -1,30 +1,31 @@
 # Game Modes
 
-This directory is for the authoritative specification of each active game mode.
+This directory contains authoritative specifications for active CALLBACK game modes.
 
-Each approved mode should get its own folder containing, at minimum:
+Each approved mode should include:
 
-- `RULES.md` — exact player-facing and server-facing rules
-- `EXAMPLES.md` — concrete sample rounds
-- `IMPLEMENTATION.md` — state transitions, validation, scoring and integration notes
+- `RULES.md` — definitive player and scoring rules
+- `FLOW-AND-COPY.md` — exact phase order and essential TV/phone instructions
+- `CONTENT.md` — content-authoring rules and pools
+- `PLAYTHROUGH.md` — complete normative example
+- `IMPLEMENTATION.md` — authoritative state, validation, generation and test contract
 
-## Approved specifications
-
-### King Prompter
+## King Prompter
 
 **Status:** APPROVED SPECIFICATION — NOT YET INTEGRATED IN SITES  
 **Approved:** 2026-08-29
 
-- [Rules](./king-prompter/RULES.md)
-- [Examples](./king-prompter/EXAMPLES.md)
+- [Definitive rules](./king-prompter/RULES.md)
+- [Screen flow and copy](./king-prompter/FLOW-AND-COPY.md)
+- [Request and comedy content guide](./king-prompter/CONTENT.md)
+- [Rule examples and edge cases](./king-prompter/EXAMPLES.md)
+- [Complete four-player playthrough](./king-prompter/PLAYTHROUGH.md)
 - [Implementation contract](./king-prompter/IMPLEMENTATION.md)
 
-The specification removes prompt ranking, adds a player-influenced Canvas Two ballot during Canvas One generation, keeps prompt text visible beside every voting image, makes Canvas Two worth 1.5× Canvas One and advances all tied canvas winners.
+King Prompter is a 15–20-minute, three-round medieval gallery game. Players answer shared King’s requests by writing instructions for fictional Royal Squires. Round One includes an optional early-finisher poll that chooses Round Two. Generated paintings are always voted on beside their exact prompts. Round Three stitches one independently prompted torn section per player around an unchanged central King. Points escalate from 100 to 150 to 300 per received vote.
 
-Do not describe this redesign as live or integrated until the current Sites implementation is separately updated and verified.
+The older player-submitted ingredient ballot, top-two combination and Crown Gallery revote are superseded. Do not describe the redesign as live until Sites is separately updated and verified.
 
 ## Deprecated modes
 
-Do not add Question Cards, Legacy Quick or Legacy Extended; they are explicitly deprecated.
-
-Until a mode has an approved specification here, Sites should inspect the current game and ask the Bible/decision files what is settled rather than inventing permanent rules from an old prototype.
+Do not restore Question Cards, Legacy Quick or Legacy Extended without explicit approval.

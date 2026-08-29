@@ -1,143 +1,202 @@
-# King Prompter — Rules
+# King Prompter — Definitive Rules
 
 **Status:** APPROVED SPECIFICATION — NOT YET INTEGRATED IN SITES  
 **Approved:** 2026-08-29  
-**Target:** 3–10 players, one shared TV/host display and one phone per player  
+**Players:** 3–10 active players, one shared host/TV display, one phone per player  
 **Target match length:** 15–20 minutes
 
-This document is authoritative for the approved King Prompter redesign. The current Sites implementation may still use the earlier prompt-ranking flow until a separate integration change is made.
+This is the authoritative rules document. If an older prototype, screen or document conflicts with it, this document wins.
 
-## Design priority
+## One-sentence definition
 
-The main source of fun is **players competing through their own creativity**.
+King Prompter is a three-round medieval party game in which players write funny instructions for supposedly human Royal Squires, the squires turn those instructions into paintings, and the room votes to decide who earns the Crown.
 
-AI image generation transforms player ideas but does not judge them. The pigeon is the theatrical presenter and never determines eligibility, votes, scores, finalists or winners.
+## Design pillars
 
-## Match structure
+1. **Player creativity is the game.** Image generation translates ideas; it does not supply the winner.
+2. **Every request gives a shared comedic starting point.** Players are never told merely to “make anything.”
+3. **The prompt and painting are judged together.** The exact player prompt is always visible beside its result during voting.
+4. **Generation time becomes play or performance.** It is overlapped with writing, voting or short pigeon comedy whenever possible.
+5. **The pigeon presents but never judges.** Votes and scores come only from players and server-owned rules.
+6. **The match escalates.** Two individual commissions lead to one deliberately bad shared restoration.
 
-A match contains:
+## Fiction and terminology
 
-1. Canvas One
-2. Canvas Two
-3. The Crown Gallery
+- The game takes place in a chaotic medieval/Renaissance castle gallery.
+- The King wants new artwork for his walls.
+- Each player has a “highly trained, completely human Royal Squire” who paints whatever the player describes.
+- “Royal Squire” is the player-facing fiction for the image-generation system. The pigeon may joke about fingers, speed, originality and suspiciously mechanical artistry, but essential instructions do not use technical AI language.
+- Use **painting**, **portrait**, **masterpiece**, **commission** and **restoration** in player-facing copy. Use technical terms such as image job and inpainting only in implementation documents.
+- The pigeon is the theatrical host. The crown represents overall victory.
 
-Prompt-ranking phases are removed. Players judge the complete creative result during image voting, with the original prompt always visible beside its generated image.
+## Match overview
 
-## Canvas One
+1. Short tutorial
+2. Round One: first King’s request and prompt submission
+3. Optional early-finisher poll chooses the Round Two request
+4. Three-second transition countdown
+5. Round Two: second King’s request and prompt submission
+6. Vote and reveal Round One paintings
+7. Vote and reveal Round Two paintings
+8. Round Three: restore one torn royal portrait together
+9. Vote for the best restored section
+10. Final scoreboard, Crown winner and completed Crown Gallery
 
-### Prompt submission
+There is no separate prompt-ranking phase and no final revote between the first two round winners.
 
-- Every active player writes one visual prompt.
-- The existing limit of fewer than 20 words remains unless a later approved decision changes it.
-- The normal writing allowance remains up to two minutes; the phase may end early when all eligible players lock.
-- Prompts and authorship remain hidden until the appropriate image-voting/reveal phase.
-- Image generation begins as early as the authoritative game state allows.
+## Tutorial
 
-### Optional Canvas Two ingredient
+- First-time tutorial target: 30–45 seconds.
+- Returning players may skip it. The human host may enable it for the whole room.
+- The tutorial must explain: the King requests artwork; players describe a painting to a Royal Squire; prompts are under 20 words; prompts become images; prompts remain visible during voting; self-voting is disabled; votes award points; the overall leader wins the Crown.
+- Essential instructions appear as readable TV and phone text even when spoken narration is enabled.
+- Exact approved tutorial copy is in `FLOW-AND-COPY.md`.
 
-Immediately after locking the Canvas One prompt, a player may submit one optional idea for Canvas Two:
+## Round One — First commission
 
-- a subject/theme; or
-- a visual art style.
+### Request
 
-Skipping this suggestion does not affect the player's Canvas One entry or voting eligibility.
+- The server selects one short curated King’s request.
+- Every player receives the same request.
+- A request is a simple comic setup, not a complete joke. It should define what the King wants while leaving the characters, action, setting and visual twist largely open.
+- Example: **“A portrait of the King’s mysterious childhood pet.”**
 
-### Canvas Two influence ballot
+### Player submission
 
-While Canvas One images generate:
+- Every active player writes one visual instruction of fewer than 20 words.
+- The phone shows the King’s request above the text field at all times.
+- The player locks once. A locked prompt cannot be edited.
+- Prompts and authors remain hidden until the Round One voting reveal.
+- Round One generation starts per entry as soon as that prompt is safely locked; it does not wait for the whole room.
+- Default writing deadline: 120 seconds. The room advances early when all required submissions are locked or valid fallbacks are assigned.
 
-- The server creates an anonymous ballot mixing curated built-in ingredients with eligible player suggestions.
-- The ballot size scales with active player count.
-- A player cannot vote for their own submitted ingredient.
-- The top two choices win regardless of category. Two themes, two styles or one of each are all valid.
-- If the two winners conflict, combine them and embrace the contradiction rather than correcting it into a safer idea.
-- Player authors remain hidden during voting and are credited after results.
-- A player whose submitted ingredient wins receives a small fixed bonus.
-- Exact ballot-size scaling and bonus value are tunable balance values, not unresolved creative-direction decisions.
+### Early-finisher poll
 
-### Pigeon presentation
+After locking, a player may optionally vote among exactly three curated possible requests for Round Two.
 
-During generation and ingredient voting, the TV pigeon may:
+- This is a waiting activity, not a separate blocking phase.
+- It opens only for players who finish while Round One submission remains active.
+- One player gets one poll vote and may change it until the poll closes.
+- The poll closes immediately when Round One submission closes.
+- A player who never sees or uses the poll loses nothing.
+- Show no live totals or leader.
+- Highest vote total wins.
+- If top choices tie with at least one vote, the tied choice that reached its final tied total first wins.
+- If nobody votes, the server **guesses** by selecting one of the three choices with fair room-seeded randomness.
+- Poll participation never awards points.
 
-- preview the available choices;
-- react to voting progress;
-- perform short comedy scenes;
-- acknowledge players when they submit;
-- interact with player avatars in random harmless moments; and
-- spotlight image winners.
+### Transition
 
-The pigeon does not recommend a choice, cast a vote or imply that its preference controls the result.
+When Round One submission closes, show a synchronized **3…2…1** countdown, then begin Round Two. Do not wait for Round One images to finish.
 
-### Canvas One image vote
+## Round Two — Player-chosen commission
 
-- Every eligible generated image or controlled fallback card remains voteable.
-- The originating prompt is always displayed beside the image.
-- Entries and authorship remain anonymous during voting.
-- Players cannot vote for their own entry.
-- The server validates rank count, eligibility, duplicates, deadline and self-voting.
-- The highest-scoring Canvas One image advances to the Crown Gallery.
-- Every image tied for the winning Canvas One position advances.
+- The winning early-finisher poll choice becomes the King’s second request.
+- If no one voted, use the server’s guessed choice.
+- Every player writes a new prompt under the same fewer-than-20-words rule.
+- Round Two prompts remain hidden until Round Two voting.
+- Default writing deadline: 120 seconds; close early when all required submissions resolve.
+- Start each Round Two image job immediately when its prompt locks.
+- Round Two is worth 1.5× Round One: **150 points per received vote**.
 
-## Canvas Two
+When Round Two submissions close, proceed to the Round One image vote. Round Two generation continues in the background.
 
-### Combined brief
+## Image voting for Rounds One and Two
 
-The two winning influence-ballot ingredients become the required shared direction for Canvas Two.
+For every candidate, show:
 
-The game must present both winning ingredients clearly. If their combination is awkward, contradictory or ridiculous, preserve that tension as part of the creative challenge.
+- the generated painting or controlled fallback;
+- the exact player-written prompt beside it; and
+- no author identity until results.
 
-### Prompt submission and generation
+Rules:
 
-- Every active player writes a new visual prompt using the shared Canvas Two ingredients.
-- The same prompt-length, secrecy, validation and generation-failure rules used for Canvas One apply.
-- The pigeon may entertain the room during generation but makes no gameplay decisions.
+- One vote per player per image-voting round.
+- A player cannot vote for their own entry.
+- No current totals or leader are shown.
+- Default vote deadline: 45 seconds; once every eligible player has voted, use a synchronized three-second closing countdown.
+- Round One awards **100 points per received vote**.
+- Round Two awards **150 points per received vote**.
+- The highest-voted painting is that round’s gallery winner.
+- Every painting tied for highest votes is a co-winner and is framed in the Crown Gallery.
+- Reveal all authors, vote totals and earned points after voting.
+- A disappointing generated image does not trigger automatic compensation. Because the prompt is shown, voters decide case by case whether the idea and result deserve their vote.
 
-### Canvas Two image vote
+## Round Three — Restore the Royal Portrait
 
-- The original prompt is always displayed beside its generated image.
-- Voting remains anonymous and self-voting is prohibited.
-- Canvas Two image-vote points are worth **1.5× the equivalent Canvas One image-vote points**.
-- The highest-scoring Canvas Two image advances to the Crown Gallery.
-- Every image tied for the winning Canvas Two position advances.
+### Setup
 
-## The Crown Gallery
+The King wants one final artwork restored. The TV shows an old royal portrait with the King preserved in the middle and the outer canvas torn away.
 
-- The Canvas One winner and Canvas Two winner face the final vote.
-- If either canvas has tied winners, every tied winning image appears in the Crown Gallery.
-- Each finalist keeps its original prompt visible beside the image.
-- Players cannot vote for their own finalist.
-- The Crown Gallery remains the highest-value competitive moment.
-- The room's vote—not AI and not the pigeon—determines the crowned image.
-- Overall score ties create co-champions.
+- The server loads a restoration template made for the current active player count.
+- The missing outer region is divided into one disjoint, roughly equal-area torn section per active player.
+- Sections surround the central King, primarily across the top and sides.
+- Each player is assigned one section using room-seeded random assignment.
+- The original King and surviving central portrait can never be altered by player generation.
 
-## Scoring principles
+### Player contribution
 
-- Remove all prompt-ranking score events.
-- Canvas One image voting establishes the base image-vote values.
-- Canvas Two uses 1.5× those values.
-- A winning player-created Canvas Two ingredient awards a small fixed bonus.
-- The Crown Gallery carries the largest single-round reward.
-- Exact numeric values should be tuned through real multiplayer tests while preserving these relative weights.
-- Use uniquely keyed, idempotent server-owned score events.
+- Each phone shows the full damaged portrait, clearly highlights that player’s assigned missing section, and provides a useful view of the surviving edge it touches.
+- The instruction is: **“What was beside or behind the King? Describe what your Royal Squire should restore. Add your own funny twist.”**
+- Each player writes one prompt of fewer than 20 words.
+- Sections and authors remain hidden from other players while writing and generating.
+- Default writing deadline: 90 seconds; close early when all required submissions resolve.
 
-## Pigeon tone and narration
+### Assembly
 
-- Pigeon teasing is adjustable by the host.
-- The tone must remain harmless and party-safe at every setting.
-- Spoken narration is reserved for key moments rather than constant commentary.
-- Essential instructions must also appear as readable text.
-- Player spotlights may celebrate submissions and wins or create random harmless comedy; they must not shame slow, losing or disconnected players.
+- Generate or inpaint each contribution only inside its assigned mask.
+- Crop/clip every result to that section before compositing, so no job can overwrite the King or another player’s section.
+- Stitch all sections around the unchanged central portrait.
+- Preserve mismatched styles, scale, lighting and perspective. The bad collage is the intended joke.
+- Add visible torn seams or decorative golden stitching so the mismatch reads as deliberate restoration, not a rendering defect.
+- The complete stitched portrait becomes the large central artwork in the Crown Gallery regardless of which section wins.
 
-## Failure and safety rules
+### Restoration vote
 
-- A failed or late image job must become a controlled voteable fallback rather than blocking the match.
-- Missing player suggestions are replaced by curated ingredients.
-- AI, media storage or narration failure cannot decide a winner or prevent completion.
-- Player prompts and suggestions are untrusted input and require structural validation plus the approved production safety policy.
-- Reconnects restore the same identity, submissions, eligibility and consumed actions.
+- Show the complete portrait first.
+- Then clearly outline/spotlight each section and show its exact prompt.
+- Keep authors hidden until results.
+- Each player awards one Royal Seal to another player’s section; self-voting is disabled.
+- Each Royal Seal is worth **300 points**.
+- Highest-voted section wins **Best Restoration**. All tied highest sections share that title.
+- Reveal authors, votes and points, then keep the complete collage framed as one shared art piece.
 
-## Superseded behavior
+## Overall winner and Crown Gallery
 
-This specification supersedes the earlier King Prompter prompt-ranking phases and any documentation that assumes those phases award points.
+- Overall score = Round One vote points + Round Two vote points + Round Three Royal Seal points.
+- Highest overall score wins the Crown and the title **King Prompter**.
+- Overall score ties create co-champions; do not use the pigeon, AI, submission speed or randomness to break them.
+- The final gallery shows:
+  - all Round One gallery winners;
+  - all Round Two gallery winners; and
+  - the complete restored portrait as the central/largest piece.
+- Round Three’s winning section receives a gold outline or Best Restoration plaque within the shared portrait.
 
-It does not modify the live Sites game by itself.
+## Pigeon host
+
+- Presentation only: no judging, eligibility decisions, votes, score changes, poll selection or tie-breaking.
+- Spoken narration is used at key moments only.
+- Host-adjustable tease levels may be Gentle, Cheeky and Roast, but every level stays harmless and party-safe.
+- The pigeon may acknowledge prompt locks, react to aggregate progress without revealing leaders, preview the three poll choices, perform short scenes, interact with avatars at harmless random moments and celebrate winners.
+- Never shame a slow, losing, disconnected or accessibility-using player.
+- Never target protected traits, real appearance, trauma or private information.
+
+## Failure, inactivity and reconnection
+
+- Invalid/missing prompts receive a safe controlled fallback at the deadline; the match continues.
+- Failed/late Round One or Two image jobs become voteable fallback cards showing the exact prompt.
+- Failed Round Three patch jobs become parchment-style repaired sections showing a decorative interpretation and the exact prompt during voting.
+- A disconnected player keeps stable identity, locked prompts, assigned restoration mask, votes and earned points.
+- A player who misses a vote simply casts no vote; do not invent one.
+- If active player count changes before Round Three assignment, select the template for the final authoritative active count. After masks are assigned, do not reshape the portrait; use the disconnected player’s submitted or controlled fallback patch.
+- AI, narration, animation and media failures cannot decide a winner or block match completion.
+
+## Explicitly removed or superseded behavior
+
+- No prompt ranking.
+- No player-submitted theme/style ingredient phase.
+- No top-two ingredient combination rule.
+- No ingredient bonus.
+- No Crown Gallery revote between Round One and Round Two winners.
+- No pigeon judging or host selection of winners.
+

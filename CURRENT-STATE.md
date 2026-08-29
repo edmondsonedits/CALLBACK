@@ -2,115 +2,59 @@
 
 _Last updated: 2026-08-29_
 
-## Product identity
+## Product
 
-**Working/current direction:** CALLBACK / King Prompter
+**Working direction:** CALLBACK / King Prompter  
+**Format:** mobile-first multiplayer party game built in ChatGPT Sites  
+**GitHub role:** authoritative Bible, engineering guidance, decision history and component lab
 
-**Product:** mobile-first multiplayer party game built and iterated in ChatGPT Sites.
-
-**GitHub's role:** authoritative project Bible, design/engineering guidance, decision history and isolated component-testing lab. GitHub is not required to contain the complete production game.
-
-## Core architecture
-
-Approved architecture: **server-authoritative, room-based multiplayer with an explicit finite-state game lifecycle**.
-
-The authoritative server owns official room/player/game state. Clients render state and submit requests/actions.
+Approved architecture: **server-authoritative, room-based multiplayer with an explicit finite-state lifecycle**. Clients render state and request actions; the server owns official outcomes.
 
 ## Creative direction
 
-Approved overarching theme: **chaotic medieval castle game show**.
+- Chaotic medieval/Renaissance castle game show
+- Theatrical pigeon host
+- Crown as victory/conflict symbol
+- Different castle areas may host different games
+- Controlled comic chaos rather than grim fantasy
+- Navy, cream, crown yellow, coral, cyan and purple palette direction
 
-Recurring anchors:
-
-- theatrical pigeon host/mascot
-- crown as symbol of victory/conflict
-- castle rooms/areas as locations for different games
-- comic theatrical chaos rather than realistic medieval fantasy
-- established opening language: typing, AI processing, royal pigeon scene, crown fight, comic explosion, main-menu reveal and looping menu animation
-
-Core palette direction:
-
-- navy
-- cream
-- crown yellow
-- coral
-- cyan
-- purple
-
-## Player/product direction
-
-- Mobile first.
-- Room-code join flow.
-- Host creates/configures the room.
-- No audience mode in the current confirmed scope.
-- Primary emotional goal: laughter.
-- Player-created prompts are an optional system, currently intended to be enabled by default unless later changed.
-- Submissions are not revealed early.
-- Scoring escalates in later rounds.
-- Game should blend skill and luck rather than reward only the naturally funniest player.
-
-## King Prompter approved redesign
+## King Prompter
 
 **Status:** APPROVED SPECIFICATION — NOT YET INTEGRATED IN SITES
 
 Authoritative documents:
 
 - `game-modes/king-prompter/RULES.md`
-- `game-modes/king-prompter/EXAMPLES.md`
+- `game-modes/king-prompter/FLOW-AND-COPY.md`
+- `game-modes/king-prompter/CONTENT.md`
+- `game-modes/king-prompter/PLAYTHROUGH.md`
 - `game-modes/king-prompter/IMPLEMENTATION.md`
 
-Approved direction:
+Current definitive flow:
 
-- target a 15–20-minute match centered on player creativity;
-- retain Canvas One, Canvas Two and the Crown Gallery;
-- remove prompt ranking;
-- show each original prompt beside its generated image during voting;
-- collect optional player theme/style ideas immediately after Canvas One prompt lock;
-- use Canvas One generation time for an anonymous, scalable mixture of curated and player-submitted Canvas Two choices;
-- block self-voting and reveal authors after the influence vote;
-- combine the top two choices regardless of category, including deliberately conflicting combinations;
-- award a small fixed bonus to player-authored winning ingredients;
-- make Canvas Two worth 1.5× Canvas One;
-- advance one winning position from each canvas and every image tied for either position;
-- keep the pigeon non-authoritative, with host-adjustable teasing and spoken narration at key moments; and
-- use safe avatar spotlights for submissions, image wins and random comedy moments.
+1. A short tutorial introduces the King, pigeon and supposedly human Royal Squires.
+2. Round One gives everyone one simple shared King’s request.
+3. Players write under 20 words. Early finishers may optionally vote among three curated Round Two requests.
+4. Once R1 submissions close, the poll resolves, a three-second countdown runs and Round Two starts while R1 paintings generate.
+5. After R2 submissions, players vote on R1 and then R2, always seeing exact prompts beside anonymous images.
+6. R1 votes are 100 points; R2 votes are 150. Tied winners all enter the gallery.
+7. Round Three shows a torn portrait with an immutable King in the centre. Every active player prompts one equal-prominence missing outer section.
+8. Independently generated, clipped patches are stitched into one deliberately mismatched portrait.
+9. Players award 300-point Royal Seals to the best other section. The complete collage becomes the gallery centrepiece.
+10. Cumulative high score wins the Crown; ties create co-champions.
 
-Exact numeric points, the ingredient-bonus amount, ballot scaling and final timing values require multiplayer balance tests. Do not claim this redesign is live until Sites is separately updated and verified.
+The previous player-submitted theme/style ballot, two-winning-ingredient combination, ingredient bonus and Crown Gallery revote are superseded and must not be restored.
 
-## Removed / do not restore
+## Current integration priority
 
-The following game concepts were explicitly removed and should not be reintroduced without a new explicit decision:
+Update the Sites implementation to match the Bible, then verify lifecycle, asynchronous generation overlap, prompt-plus-image voting, scoring, reconnection, 3–10-player restoration masks, patch clipping/fallbacks and 15–20-minute real multiplayer pacing.
 
-- Question Cards
-- Legacy Quick
-- Legacy Extended
+## Removed modes
 
-See `decisions/DEPRECATED.md`.
+Do not restore Question Cards, Legacy Quick or Legacy Extended without explicit approval.
 
-## Current approved component prototypes
+## Avatar reference
 
-### Avatar Studio v2
+Avatar Studio v2 remains an approved prototype/reference for compact configuration, local SVG reconstruction, presets, editor behavior and reusable reactions. Its fake lobby/local-storage behavior is not production multiplayer authority.
 
-**Status:** APPROVED PROTOTYPE — ready to guide integration, not yet proof of production multiplayer integration.
-
-Location: `components/avatar-studio/`
-
-Proven/reference-worthy:
-
-- compact avatar configuration model
-- local SVG reconstruction
-- modular renderer
-- fine-tune editor
-- family presets
-- reusable avatar animation vocabulary
-- mobile editing UX
-
-Demo-only / not production authority:
-
-- local fake lobby
-- local-storage-only save behavior
-- any player/room behavior shown by the studio
-
-## Immediate repository purpose
-
-Use the Bible to progressively document game modes, lifecycle rules, UI behavior, AI/image systems and creative direction as they are approved. Use `components/` to prototype individual systems before integrating them into Sites.
