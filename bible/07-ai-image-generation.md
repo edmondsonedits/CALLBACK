@@ -1,51 +1,38 @@
-# Game Architecture
+# AI & Image Generation
 
-## Architectural identity
+## Role
 
-CALLBACK is a **server-authoritative, room-based multiplayer game with explicit finite-state lifecycles and role-specific state projections**.
+AI-generated content supports the party-game loop and theatrical presentation. It is never authoritative game state.
 
-## Server authority
+## Current direction
 
-The authoritative server owns room membership, stable identities, host permissions, teams/roles, phase, round/turn, deadlines, content order, submissions, voting/guessing eligibility, accepted actions, score ledger, results, winners and match finalization.
+- Keep Cloudflare as the current production direction.
+- Host-facing profiles: **Flux.1 Schnell**, **Flux 2 Fast** and **Flux 2 Quality**.
+- Keep exact provider/model identifiers behind a server-side adapter so profiles can change without rewriting mode rules.
+- Never expose credentials in client code.
+- Current curated request pool is all-ages.
+- A future self-hosted ComfyUI path for adult-content games is a separate possibility, not current production.
 
-Clients may acknowledge input optimistically, but official state comes from the server.
+## Pacing
 
-## Mode state machines
+Start jobs as early as the selected mode permits. King Prompter overlaps writing, generation and voting so slow media does not become dead time. Job completion may unlock media presentation, but it cannot redefine phase eligibility or scoring.
 
-Do not force every mode into one oversimplified sequence. A collection-level shell owns room setup, lobby, mode selection, reconnect and terminal finalization. Each mode supplies an explicit statechart for its own mechanics.
+## Royal Restoration
 
-Representative families:
+Use reusable prebuilt torn-section overlays around the unchanged central King. Generate normal square images, clip each output into its assigned mask and stitch the sections with deliberate visible seams. Provider-native inpainting may improve coherence later but is not required for the approved composition rule.
 
-- Submission/voting: intro → prompt → submit → generate/reveal → vote → result
-- Turn/performance: round intro → performer turn → correct/pass/timeout → next turn → round result
-- Council strategy: briefing → private ranking → council/commander action → reveal → scoring → mirrored replay
+## Failure behavior
 
-Transitions are commands/events, not UI booleans.
+Generation/narration failure must not corrupt room state or block a match. Retry within explicit limits, then attach a controlled voteable fallback. Store job status separately from official score events.
 
-## Stable identity and reconnect
+## Prompt and media records
 
-A reconnect token/session recovers the same player. The server restores current team, role, consumed actions and a projection appropriate to that player. Reloading never grants another vote, pass, submission or turn.
+Store the exact game prompt/input separately from generated media, provider profile, timestamps and durable object reference. History Books links the public-safe prompt and media while internal diagnostics may remain private.
 
-## Command contract
+## Validation and content handling
 
-Every state-changing command carries a command ID and expected room/state version. Validate schema, identity, permission, current phase, eligibility and payload. Deduplicate retries and return the latest projection when a client is stale.
+Treat all text/media as untrusted technical input: enforce length, encoding, schema, rate and file checks. No additional bespoke semantic submission moderation is part of the confirmed current design. Required provider/platform enforcement still applies.
 
-## Deadlines
+## Future work
 
-Clients display server-owned deadlines. Only the server advances on timeout.
-
-## Side effects
-
-AI generation, media storage, voice/video sessions, narration and History Books persistence are side effects around authoritative rules. Use job IDs and idempotent handlers. A side-effect failure cannot silently change the score or trap a match.
-
-## Media
-
-Voice/video is transport, not game authority. Bowl of Fools spoken guesses are adjudicated through explicit game actions. In Remote Live, current-performer-only video is the default projection/transport policy and each client controls its own view.
-
-## Persistence and history
-
-Live room state and public match history are different models. At terminal state, create one immutable/versioned public match record through an idempotent finalization key. Store metadata separately from media objects and preserve mode-specific privacy redactions.
-
-## Separation of concerns
-
-**mode rules → authoritative transition → side effects → role projection → presentation**
+See `decisions/OPEN-DECISIONS.md` for provider identifiers, retry/timeouts, retention, public diagnostic fields and the possible separate ComfyUI deployment.

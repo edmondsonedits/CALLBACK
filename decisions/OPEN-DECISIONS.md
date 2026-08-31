@@ -1,38 +1,53 @@
-# AI & Image Generation
+# Open Decisions
 
-## Role
+These are not settled. A prototype may use a clearly labelled temporary value but must not present it as permanent approval.
 
-AI-generated content supports the party-game loop and theatrical presentation. It is never authoritative game state.
+## Naming and product structure
 
-## Current direction
+- Final public collection name: CALLBACK, King Prompter or another name.
+- Whether King Prompter remains both the public product name and a mode name.
+- Final public name of the Fishbowl-derived mode; **Bowl of Fools** is a working title.
+- Exact castle room assigned to each mode.
 
-- Keep Cloudflare as the current production direction.
-- Host-facing profiles: **Flux.1 Schnell**, **Flux 2 Fast** and **Flux 2 Quality**.
-- Keep exact provider/model identifiers behind a server-side adapter so profiles can change without rewriting mode rules.
-- Never expose credentials in client code.
-- Current curated request pool is all-ages.
-- A future self-hosted ComfyUI path for adult-content games is a separate possibility, not current production.
+## Bowl of Fools tuning
 
-## Pacing
+- Default and allowed scrolls per player.
+- Default performer turn length and optional host presets.
+- Minimum/maximum players and exact automatic team-balancing behavior.
+- Which team starts a new round when cumulative scores are tied.
+- Exact one-scroll sudden-death presentation and performer-selection procedure.
+- Drawing tool surface, canvas-sharing rules and accessibility alternatives.
+- Final WebRTC/voice provider and whether in-game video is enabled independently from voice.
 
-Start jobs as early as the selected mode permits. King Prompter overlaps writing, generation and voting so slow media does not become dead time. Job completion may unlock media presentation, but it cannot redefine phase eligibility or scoring.
+The settled rules in `decisions/APPROVED.md` must not be reopened by temporary tuning values.
 
-## Royal Restoration
+## Royal War Room documentation
 
-Use reusable prebuilt torn-section overlays around the unchanged central King. Generate normal square images, clip each output into its assigned mask and stitch the sections with deliberate visible seams. Provider-native inpainting may improve coherence later but is not required for the approved composition rule.
+- Expand the detailed scoring table, exact six orders, timer defaults and copy from verified published behavior.
+- Do not guess these values from the short Bible summary.
 
-## Failure behavior
+## History Books
 
-Generation/narration failure must not corrupt room state or block a match. Retry within explicit limits, then attach a controlled voteable fallback. Store job status separately from official score events.
+- Exact public retention period and deletion/moderation workflow.
+- Whether players may claim profiles across matches without requiring an account to play.
+- Search ranking, featured-match rules and exact public URL format.
+- Which low-level generation diagnostics should remain internal instead of public.
+- Final policy for player-requested removal of public names/avatars while retaining match integrity.
 
-## Prompt and media records
+## AI / image production
 
-Store the exact game prompt/input separately from generated media, provider profile, timestamps and durable object reference. History Books links the public-safe prompt and media while internal diagnostics may remain private.
+- Exact provider model identifiers behind Flux 2 Fast and Flux 2 Quality profiles.
+- Production timeout, retry and storage-retention values.
+- Whether future self-hosted ComfyUI becomes a separate adult-content deployment.
+- Final image-edit/inpainting provider used by restoration when provider-native editing is available.
 
-## Validation and content handling
+## Content production
 
-Treat all text/media as untrusted technical input: enforce length, encoding, schema, rate and file checks. No additional bespoke semantic submission moderation is part of the confirmed current design. Required provider/platform enforcement still applies.
+- Final size and editorial review process for the King's request pool.
+- Final number of restoration base portraits and seasonal variants.
+- Final recorded pigeon voice, music library and complete reaction library.
 
-## Future work
+## Playtest tuning
 
-See `decisions/OPEN-DECISIONS.md` for provider identifiers, retry/timeouts, retention, public diagnostic fields and the possible separate ComfyUI deployment.
+- King Prompter defaults may be tuned only after real multiplayer measurement while keeping the 15–20-minute target and optional activities non-blocking.
+- Bowl of Fools timers and setup defaults require local and Remote Live playtests.

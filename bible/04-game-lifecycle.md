@@ -1,40 +1,37 @@
-# Game Modes
+# Game Lifecycle
 
-This directory contains authoritative specifications for active CALLBACK castle game modes.
+The collection uses a shared shell plus a mode-owned explicit lifecycle.
 
-A mature approved mode should include definitive rules, flow/copy, content guidance, a normative playthrough and an implementation contract. A shorter verified summary is acceptable while documentation is being expanded; missing values must remain open rather than being invented.
+## Shared shell
 
-## King Prompter
+1. **Room setup** — host creates the room and configures approved mode options.
+2. **Lobby** — players join/reconnect, choose name/avatar, enter teams/roles and become ready.
+3. **Mode start** — server freezes the starting roster as required and enters the selected mode statechart.
+4. **Mode play** — only mode-valid server events advance rounds, turns, votes and scores.
+5. **Terminal result** — server declares the official winner/tie.
+6. **History finalization** — one idempotent public record is written with required privacy redactions.
+7. **Post-game** — rematch, return to lobby or view History Books.
 
-**Status:** INTEGRATED IN SITES; real-group playtest pending  
-**Approved:** 2026-08-29
+## Submission and voting modes
 
-- [Rules](./king-prompter/RULES.md)
-- [Flow and copy](./king-prompter/FLOW-AND-COPY.md)
-- [Content](./king-prompter/CONTENT.md)
-- [Examples](./king-prompter/EXAMPLES.md)
-- [Playthrough](./king-prompter/PLAYTHROUGH.md)
-- [Implementation](./king-prompter/IMPLEMENTATION.md)
+Keep prompt, submission, reveal, voting and results separate. Anonymous content stays anonymous until the mode explicitly permits disclosure.
 
-A 15–20-minute, three-round medieval gallery game: two shared-request image rounds followed by collaborative Royal Restoration using prebuilt torn-section overlays.
+## Turn/performance modes
 
-## Royal War Room
+The server assigns the active performer/team, scroll/content item, pass allowance and deadline. Correct, pass, undo and timeout are discrete ledger events. A reconnect restores the same turn instead of starting another.
 
-**Status:** INTEGRATED AND PUBLISHED
+## Mirrored modes
 
-- [Verified mode summary](./royal-war-room/README.md)
+When a mode promises an Attack followed by Defend replay, the replay is a required state transition, not an optional UI route. Preserve the scenario link between halves and rotate commander roles according to the mode rules.
 
-Two councils secretly rank six orders, attack, then replay the situation on defence with rotating commanders, Spyglass clues and team scoring.
+## Ties and round transitions
 
-## Bowl of Fools (working title)
+Ties are handled only by the selected mode's explicit rule. Examples:
 
-**Status:** APPROVED RULE DIRECTION; integration not verified
+- King Prompter permits co-winners/co-champions.
+- Bowl of Fools uses one-scroll sudden death for the final match tie.
+- When Bowl of Fools empties between rounds, the trailing team starts the next round.
 
-- [Rules](./bowl-of-fools/RULES.md)
-- [Implementation contract](./bowl-of-fools/IMPLEMENTATION.md)
+## Reconnect
 
-A three-round repeated-scroll team game supporting local and Remote Live play: Describe, host-selected Drawing or Charades, then One Word.
-
-## Deprecated modes
-
-Do not restore Question Cards, Legacy Quick or Legacy Extended without explicit approval.
+At any phase, restore authoritative room state, stable identity, private role projection and already-consumed actions. Reloading must not duplicate a player or repeat an irreversible action.

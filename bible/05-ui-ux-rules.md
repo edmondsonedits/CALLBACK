@@ -1,40 +1,48 @@
-# Product Vision
+# UI / UX Rules
 
-## Product
+## Mobile first
 
-CALLBACK / King Prompter is a mobile-first multiplayer castle party-game collection built around player creativity, team discussion, prompts, performance, voting, AI-assisted spectacle and a theatrical pigeon host.
+Player controls fit small screens, use large touch targets and avoid precision input except when a mode intentionally uses drawing.
 
-The experience should be easy to join, easy to understand and socially funny rather than mechanically dense. Individual modes can use different mechanics while sharing one identity, room system, avatar language, public history and castle-show world.
+## Shared display and phones
 
-## Audience
+The shared/host display carries public context, timer, spectacle and TV audio. Phones prioritize the private action each player needs now. Never show secret council rankings, hidden authorship or the current scroll to ineligible viewers.
 
-Groups of friends and family playing in the same room or remotely. Players should not need gaming experience or technical knowledge.
+## State clarity
 
-## Primary journey
+Every participant should understand the phase, required action, whether it was accepted and whether they are waiting. Provide reconnect/resume feedback without exposing internal state.
 
-1. Host creates a room and selects a mode and options.
-2. Players join with a room code, stable identity and avatar.
-3. The server moves the room through the selected mode's explicit lifecycle.
-4. Players write, perform, discuss, draw, vote or command as the mode requires.
-5. The shared display delivers clear instructions and game-show spectacle.
-6. The server calculates official results and winners.
-7. The completed match is safely finalized into the public History Books.
+## Local and Remote Live
 
-## Product goals
+Remote Live is an approved play configuration, not a separate rule set.
 
-- Produce laughter reliably across mixed-skill groups.
-- Make each phase understandable without a long explanation.
-- Support both local and Remote Live play where the mode allows.
-- Keep players engaged while AI/media work occurs.
-- Make modes feel like different rooms in one coherent castle show.
-- Preserve memorable matches as a browsable public library.
-- Reward creativity and teamwork without making one skill type dominate every mode.
+- Built-in voice is optional and can be switched off so the group may use a phone call or other channel.
+- Bowl of Fools normally transmits only the current performer's camera.
+- Each person controls their own view and may change it on the fly.
+- Camera and microphone controls are obvious, reversible and never required for modes that can be played externally.
+- Essential game state remains readable even if media fails.
 
-## Non-goals
+## Submission and identity secrecy
 
-- Serious esports balance
-- Realistic medieval simulation
-- Heavy RPG progression
-- Complex accounts as a prerequisite to play
-- Mandatory always-on camera or built-in voice
-- UI that feels like a generic productivity app
+Do not reveal content early. Permanent anonymity rules survive results and History Books; Bowl of Fools never reveals scroll authors.
+
+## Waiting
+
+Use avatar reactions, pigeon behavior, lightweight fidgets or game-show presentation without changing official rules or blocking progress.
+
+## Host correction
+
+A host correction control must communicate exactly what was reversed. In Bowl of Fools, illegal clues use the honor system and host undo reverses the affected ruling/point through the server ledger.
+
+## Accessibility
+
+- Strong contrast and readable phone text
+- Reduced-motion support where practical
+- Keyboard/focus accessibility
+- No essential status encoded only by color
+- Captions/text instructions for required information
+- Drawing alternatives remain an open mode-specific decision
+
+## Simplicity
+
+If a basic button or phase needs a paragraph of explanation, simplify it before adding more copy.

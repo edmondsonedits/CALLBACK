@@ -1,64 +1,40 @@
-# Public History Books
+# Game Modes
 
-## Purpose
+This directory contains authoritative specifications for active CALLBACK castle game modes.
 
-History Books is the public library of completed CALLBACK castle matches. It is a separate browsable web page that lets players revisit what happened, who played, the prompts/images created and the official results.
+A mature approved mode should include definitive rules, flow/copy, content guidance, a normative playthrough and an implementation contract. A shorter verified summary is acceptable while documentation is being expanded; missing values must remain open rather than being invented.
 
-It is not a private host dashboard and not raw developer telemetry.
+## King Prompter
 
-## Public browsing
+**Status:** INTEGRATED IN SITES; real-group playtest pending  
+**Approved:** 2026-08-29
 
-Provide:
+- [Rules](./king-prompter/RULES.md)
+- [Flow and copy](./king-prompter/FLOW-AND-COPY.md)
+- [Content](./king-prompter/CONTENT.md)
+- [Examples](./king-prompter/EXAMPLES.md)
+- [Playthrough](./king-prompter/PLAYTHROUGH.md)
+- [Implementation](./king-prompter/IMPLEMENTATION.md)
 
-- newest and featured completed matches
-- filters for mode, date, player display name and result/winner where practical
-- clear categories/labels and pagination
-- a permanent detail page for each public match
-- shareable URLs
-- responsive phone and desktop layouts
-- useful empty, loading and missing-media states
+A 15–20-minute, three-round medieval gallery game: two shared-request image rounds followed by collaborative Royal Restoration using prebuilt torn-section overlays.
 
-## Match record
+## Royal War Room
 
-Each finalized record should include, when the mode produces it:
+**Status:** INTEGRATED AND PUBLISHED
 
-- stable public match ID and schema version
-- mode ID/name and castle location
-- start/end timestamps and duration
-- public room/match title, not reusable join credentials
-- host-selected game settings
-- participant IDs scoped for public history, display-name snapshots and avatar snapshots/configuration
-- team/council membership and rotating roles
-- round/turn sequence, deadlines and completion state
-- public prompts/requests/scroll text allowed by the mode
-- generated images with prompt, round, profile/provider label, dimensions and accessible alt text
-- votes/guesses/actions at the level approved for public display
-- per-round and final scores
-- winners, ties and notable gallery/restoration results
-- safe tags/categories and created/updated timestamps
+- [Verified mode summary](./royal-war-room/README.md)
 
-Store enough structured data to reconstruct a readable match story without exposing secrets, credentials or private diagnostics.
+Two councils secretly rank six orders, attack, then replay the situation on defence with rotating commanders, Spyglass clues and team scoring.
 
-## Mode-specific presentation
+## Bowl of Fools (working title)
 
-- **King Prompter:** pair every archived image with its exact prompt; show gallery winners and the final Royal Restoration collage.
-- **Royal War Room:** show councils, scenario halves, commanders and final team result; redact rankings/clues that the published rules designate as permanently secret.
-- **Bowl of Fools:** show match/round/team results and public scrolls only if approved for display, but **never store or reveal the scroll-author relationship**.
+**Status:** APPROVED RULE DIRECTION; integration not verified
 
-## Persistence
+- [Rules](./bowl-of-fools/RULES.md)
+- [Implementation contract](./bowl-of-fools/IMPLEMENTATION.md)
 
-- Live room state is not the history record.
-- Only the authoritative terminal transition may enqueue finalization.
-- Use a stable idempotency key so refreshes/retries cannot create duplicate matches.
-- Write structured metadata to the durable database and generated media to object storage; link them with stable object keys.
-- Never publish room codes, reconnect tokens, voice/video session data, IP addresses, provider credentials or raw moderation/security logs.
-- Preserve records across deployments and verify media references before marking finalization complete.
-- If media is still processing, publish a controlled pending/fallback state and update it idempotently.
+A three-round repeated-scroll team game supporting local and Remote Live play: Describe, host-selected Drawing or Charades, then One Word.
 
-## Privacy and integrity
+## Deprecated modes
 
-History Books is public by product decision, so the UI must make public archival clear before a match begins. A mode's secrecy rule outranks the desire to store more data. Do not infer or reconstruct hidden authorship. Exact retention, removal requests and claimed cross-match profiles remain open decisions.
-
-## Quality checks
-
-Test duplicate finalization, reconnect during game-over, tied winners, missing images, deleted media, long names/prompts, 3–10-player restoration layouts, Bowl of Fools permanent anonymity, search/filter accuracy and mobile rendering.
+Do not restore Question Cards, Legacy Quick or Legacy Extended without explicit approval.

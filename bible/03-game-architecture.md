@@ -1,53 +1,51 @@
-# Open Decisions
+# Game Architecture
 
-These are not settled. A prototype may use a clearly labelled temporary value but must not present it as permanent approval.
+## Architectural identity
 
-## Naming and product structure
+CALLBACK is a **server-authoritative, room-based multiplayer game with explicit finite-state lifecycles and role-specific state projections**.
 
-- Final public collection name: CALLBACK, King Prompter or another name.
-- Whether King Prompter remains both the public product name and a mode name.
-- Final public name of the Fishbowl-derived mode; **Bowl of Fools** is a working title.
-- Exact castle room assigned to each mode.
+## Server authority
 
-## Bowl of Fools tuning
+The authoritative server owns room membership, stable identities, host permissions, teams/roles, phase, round/turn, deadlines, content order, submissions, voting/guessing eligibility, accepted actions, score ledger, results, winners and match finalization.
 
-- Default and allowed scrolls per player.
-- Default performer turn length and optional host presets.
-- Minimum/maximum players and exact automatic team-balancing behavior.
-- Which team starts a new round when cumulative scores are tied.
-- Exact one-scroll sudden-death presentation and performer-selection procedure.
-- Drawing tool surface, canvas-sharing rules and accessibility alternatives.
-- Final WebRTC/voice provider and whether in-game video is enabled independently from voice.
+Clients may acknowledge input optimistically, but official state comes from the server.
 
-The settled rules in `decisions/APPROVED.md` must not be reopened by temporary tuning values.
+## Mode state machines
 
-## Royal War Room documentation
+Do not force every mode into one oversimplified sequence. A collection-level shell owns room setup, lobby, mode selection, reconnect and terminal finalization. Each mode supplies an explicit statechart for its own mechanics.
 
-- Expand the detailed scoring table, exact six orders, timer defaults and copy from verified published behavior.
-- Do not guess these values from the short Bible summary.
+Representative families:
 
-## History Books
+- Submission/voting: intro → prompt → submit → generate/reveal → vote → result
+- Turn/performance: round intro → performer turn → correct/pass/timeout → next turn → round result
+- Council strategy: briefing → private ranking → council/commander action → reveal → scoring → mirrored replay
 
-- Exact public retention period and deletion/moderation workflow.
-- Whether players may claim profiles across matches without requiring an account to play.
-- Search ranking, featured-match rules and exact public URL format.
-- Which low-level generation diagnostics should remain internal instead of public.
-- Final policy for player-requested removal of public names/avatars while retaining match integrity.
+Transitions are commands/events, not UI booleans.
 
-## AI / image production
+## Stable identity and reconnect
 
-- Exact provider model identifiers behind Flux 2 Fast and Flux 2 Quality profiles.
-- Production timeout, retry and storage-retention values.
-- Whether future self-hosted ComfyUI becomes a separate adult-content deployment.
-- Final image-edit/inpainting provider used by restoration when provider-native editing is available.
+A reconnect token/session recovers the same player. The server restores current team, role, consumed actions and a projection appropriate to that player. Reloading never grants another vote, pass, submission or turn.
 
-## Content production
+## Command contract
 
-- Final size and editorial review process for the King's request pool.
-- Final number of restoration base portraits and seasonal variants.
-- Final recorded pigeon voice, music library and complete reaction library.
+Every state-changing command carries a command ID and expected room/state version. Validate schema, identity, permission, current phase, eligibility and payload. Deduplicate retries and return the latest projection when a client is stale.
 
-## Playtest tuning
+## Deadlines
 
-- King Prompter defaults may be tuned only after real multiplayer measurement while keeping the 15–20-minute target and optional activities non-blocking.
-- Bowl of Fools timers and setup defaults require local and Remote Live playtests.
+Clients display server-owned deadlines. Only the server advances on timeout.
+
+## Side effects
+
+AI generation, media storage, voice/video sessions, narration and History Books persistence are side effects around authoritative rules. Use job IDs and idempotent handlers. A side-effect failure cannot silently change the score or trap a match.
+
+## Media
+
+Voice/video is transport, not game authority. Bowl of Fools spoken guesses are adjudicated through explicit game actions. In Remote Live, current-performer-only video is the default projection/transport policy and each client controls its own view.
+
+## Persistence and history
+
+Live room state and public match history are different models. At terminal state, create one immutable/versioned public match record through an idempotent finalization key. Store metadata separately from media objects and preserve mode-specific privacy redactions.
+
+## Separation of concerns
+
+**mode rules → authoritative transition → side effects → role projection → presentation**
