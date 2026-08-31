@@ -1,68 +1,53 @@
-# Game Architecture
+# Open Decisions
 
-## Architectural identity
+These are not settled. A prototype may use a clearly labelled temporary value but must not present it as permanent approval.
 
-CALLBACK is a **server-authoritative, room-based multiplayer game with an explicit finite-state game lifecycle**.
+## Naming and product structure
 
-This is the default architecture Sites should preserve when adding features.
+- Final public collection name: CALLBACK, King Prompter or another name.
+- Whether King Prompter remains both the public product name and a mode name.
+- Final public name of the Fishbowl-derived mode; **Bowl of Fools** is a working title.
+- Exact castle room assigned to each mode.
 
-## Server authority
+## Bowl of Fools tuning
 
-The authoritative server owns:
+- Default and allowed scrolls per player.
+- Default performer turn length and optional host presets.
+- Minimum/maximum players and exact automatic team-balancing behavior.
+- Which team starts a new round when cumulative scores are tied.
+- Exact one-scroll sudden-death presentation and performer-selection procedure.
+- Drawing tool surface, canvas-sharing rules and accessibility alternatives.
+- Final WebRTC/voice provider and whether in-game video is enabled independently from voice.
 
-- room membership
-- stable player identity
-- host identity/permissions
-- current game phase
-- round number
-- prompts
-- phase deadlines
-- submissions
-- voting eligibility
-- votes
-- scores
-- official round results
-- official game winner
+The settled rules in `decisions/APPROVED.md` must not be reopened by temporary tuning values.
 
-A client may optimistically animate or acknowledge input, but official state must come from the server.
+## Royal War Room documentation
 
-## Lifecycle
+- Expand the detailed scoring table, exact six orders, timer defaults and copy from verified published behavior.
+- Do not guess these values from the short Bible summary.
 
-Model the game as explicit states rather than a loose collection of booleans. A representative lifecycle is:
+## History Books
 
-`ROOM_SETUP → LOBBY → ROUND_INTRO → PROMPT → SUBMISSION → REVEAL → VOTING → RESULTS → SCOREBOARD → NEXT_ROUND/FINALE → GAME_OVER`
+- Exact public retention period and deletion/moderation workflow.
+- Whether players may claim profiles across matches without requiring an account to play.
+- Search ranking, featured-match rules and exact public URL format.
+- Which low-level generation diagnostics should remain internal instead of public.
+- Final policy for player-requested removal of public names/avatars while retaining match integrity.
 
-Individual game modes may add substates, but they should still fit inside an explicit authoritative lifecycle.
+## AI / image production
 
-## Stable identity
+- Exact provider model identifiers behind Flux 2 Fast and Flux 2 Quality profiles.
+- Production timeout, retry and storage-retention values.
+- Whether future self-hosted ComfyUI becomes a separate adult-content deployment.
+- Final image-edit/inpainting provider used by restoration when provider-native editing is available.
 
-A reconnecting player should recover the same server-side player identity rather than silently creating a duplicate player. Display name and avatar are attributes of that identity, not identity itself.
+## Content production
 
-## Deadlines
+- Final size and editorial review process for the King's request pool.
+- Final number of restoration base portraits and seasonal variants.
+- Final recorded pigeon voice, music library and complete reaction library.
 
-Timers displayed by clients are presentation of a server-owned deadline. Clients should not independently decide that a phase ended.
+## Playtest tuning
 
-## Validation
-
-Validate every state-changing command against current phase, room membership, player eligibility and expected payload shape before applying it.
-
-## Vocabulary-first engineering
-
-Before writing generic infrastructure, identify the established concept first. Examples:
-
-- finite-state machine/statechart for lifecycle
-- authoritative server for multiplayer state
-- reconnect token/session identity for stable players
-- schema validation for network messages
-- idempotency/deduplication for retry-safe actions
-- server timestamps/deadlines for synchronized timers
-
-Use mature solutions where available. Keep custom code focused on CALLBACK-specific rules and presentation.
-
-## Separation of concerns
-
-Maintain this ordering:
-
-**game rules → authoritative state transition → AI/content side effects → presentation**
-
-UI, animation and AI output must not silently redefine rules.
+- King Prompter defaults may be tuned only after real multiplayer measurement while keeping the 15–20-minute target and optional activities non-blocking.
+- Bowl of Fools timers and setup defaults require local and Remote Live playtests.

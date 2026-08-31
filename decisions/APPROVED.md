@@ -1,72 +1,48 @@
-# Approved Decisions
+# UI / UX Rules
 
-These decisions are authoritative until the user explicitly changes them.
+## Mobile first
 
-## Repository role
+Player controls fit small screens, use large touch targets and avoid precision input except when a mode intentionally uses drawing.
 
-- GitHub is the project Bible and component lab for CALLBACK / King Prompter.
-- The complete playable game may live in ChatGPT Sites.
-- Sites must consult this repository before meaningful product, architecture, gameplay or visual changes.
+## Shared display and phones
 
-## Architecture
+The shared/host display carries public context, timer, spectacle and TV audio. Phones prioritize the private action each player needs now. Never show secret council rankings, hidden authorship or the current scroll to ineligible viewers.
 
-- Server-authoritative, room-based multiplayer with an explicit finite-state lifecycle.
-- The server owns membership, stable identity, phase, deadlines, requests, prompts, generation jobs, voting eligibility, votes, score ledger and results.
-- Clients request actions and render snapshots; presentation cannot decide official state.
-- Prefer mature libraries/patterns for generic infrastructure and custom code for CALLBACK-specific gameplay.
+## State clarity
 
-## Core experience
+Every participant should understand the phase, required action, whether it was accepted and whether they are waiting. Provide reconnect/resume feedback without exposing internal state.
 
-- Mobile-first room-code joining with a human host.
-- No audience mode in the approved scope.
-- Primary emotional target: laughter through player creativity.
-- Do not reveal submissions before their intended voting/reveal phase.
-- Later rounds matter more.
-- Pigeon narration is limited to key moments; essential instructions are readable.
-- Pigeon tease intensity is host-adjustable but always harmless and party-safe.
+## Local and Remote Live
 
-## King Prompter
+Remote Live is an approved play configuration, not a separate rule set.
 
-The full authority is `game-modes/king-prompter/`.
+- Built-in voice is optional and can be switched off so the group may use a phone call or other channel.
+- Bowl of Fools normally transmits only the current performer's camera.
+- Each person controls their own view and may change it on the fly.
+- Camera and microphone controls are obvious, reversible and never required for modes that can be played externally.
+- Essential game state remains readable even if media fails.
 
-- 3–10 players; 15–20-minute target.
-- Fiction: the King commissions artwork; each player instructs a supposedly human Royal Squire; the pigeon hosts a chaotic medieval/Renaissance gallery show.
-- First-time tutorial lasts roughly 30–45 seconds and is skippable for returning players.
-- Every normal round begins with one clear shared King’s request. Prompts contain 1–19 words.
-- No prompt-ranking phase.
-- Round One generation starts per locked entry.
-- Early finishers may optionally vote among exactly three curated requests for Round Two. This poll never blocks play or awards points.
-- Poll ties with votes go to the choice that reached its final tied total first. With zero votes, the server guesses using fair room-seeded randomness.
-- Round Two begins after a three-second countdown as soon as Round One submissions close; do not wait for Round One generation.
-- After Round Two submissions, vote Round One, then Round Two. Always show the exact prompt beside its image; hide authors; prohibit self-voting.
-- Round One awards 100 points per received vote. Round Two awards 150.
-- Every top-vote tie is a co-winner and all tied paintings enter the Crown Gallery.
-- Round Three restores one torn royal portrait. The central King remains immutable; each active player prompts one equal-prominence missing outer section; patches are independently generated, clipped and stitched together with visible seams.
-- The complete badly mismatched collage is the intended shared finale and becomes the central gallery art.
-- Players award one Royal Seal to another section. Each seal is worth 300 points. Top tied sections share Best Restoration.
-- Cumulative high score wins the Crown; overall ties create co-champions.
-- The pigeon is presentation only and never judges, votes, scores, selects poll results or breaks ties.
-- Failed images/patches receive controlled voteable fallbacks; generation and narration failure cannot block the match.
-- The older theme/style suggestion ballot, top-two combination, ingredient bonus and Crown Gallery revote are superseded.
+## Submission and identity secrecy
 
-## Creative direction
+Do not reveal content early. Permanent anonymity rules survive results and History Books; Bowl of Fools never reveals scroll authors.
 
-- Chaotic medieval castle game show.
-- Pigeon host/mascot and crown victory symbol.
-- Castle areas may stage different games.
-- Palette direction: navy, cream, crown yellow, coral, cyan and purple.
-- Tone: theatrical, playful, absurd and controlled-chaotic rather than grim or realistic.
-- Preserve the opening/menu language: typing, processing, pigeon scene, crown fight, comic explosion, menu reveal/loop.
+## Waiting
 
-## Avatars
+Use avatar reactions, pigeon behavior, lightweight fidgets or game-show presentation without changing official rules or blocking progress.
 
-- Use compact locally reconstructable avatar configuration rather than synchronized image files.
-- Avatar Studio v2 is an approved reference prototype.
-- Reuse avatar reactions for lobby, waiting, voting, results and victory where appropriate.
+## Host correction
 
-## Removed modes
+A host correction control must communicate exactly what was reversed. In Bowl of Fools, illegal clues use the honor system and host undo reverses the affected ruling/point through the server ledger.
 
-- Question Cards
-- Legacy Quick
-- Legacy Extended
+## Accessibility
 
+- Strong contrast and readable phone text
+- Reduced-motion support where practical
+- Keyboard/focus accessibility
+- No essential status encoded only by color
+- Captions/text instructions for required information
+- Drawing alternatives remain an open mode-specific decision
+
+## Simplicity
+
+If a basic button or phase needs a paragraph of explanation, simplify it before adding more copy.

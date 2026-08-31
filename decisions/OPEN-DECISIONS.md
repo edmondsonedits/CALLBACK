@@ -1,42 +1,38 @@
-# Open Decisions
+# AI & Image Generation
 
-These are not settled. An implementation may use a clearly labeled temporary prototype value, but must not present it as approved permanence.
+## Role
 
-## Naming and product structure
+AI-generated content supports the party-game loop and theatrical presentation. It is never authoritative game state.
 
-- Whether the public product is CALLBACK, King Prompter or another name.
-- Whether CALLBACK is the collection/universe and King Prompter is one mode.
+## Current direction
 
-## Other modes
+- Keep Cloudflare as the current production direction.
+- Host-facing profiles: **Flux.1 Schnell**, **Flux 2 Fast** and **Flux 2 Quality**.
+- Keep exact provider/model identifiers behind a server-side adapter so profiles can change without rewriting mode rules.
+- Never expose credentials in client code.
+- Current curated request pool is all-ages.
+- A future self-hosted ComfyUI path for adult-content games is a separate possibility, not current production.
 
-- Final list and exact rules of modes other than King Prompter.
-- Castle room associated with each mode.
+## Pacing
 
-## AI/image production
+Start jobs as early as the selected mode permits. King Prompter overlaps writing, generation and voting so slow media does not become dead time. Job completion may unlock media presentation, but it cannot redefine phase eligibility or scoring.
 
-- Final production model lineup and host-facing model-selection UX.
-- Exact moderation provider, job timeout values, retry count, storage and retention policy.
-- Which production image-edit/inpainting model will power Royal Restoration.
-- Whether non-inpainting models remain selectable for Rounds One/Two only or use the documented lower-coherence restoration adapter.
+## Royal Restoration
 
-King Prompter’s required behavior is settled even though provider selection is not: image jobs are non-authoritative; R1 overlaps R2 writing; R2 overlaps R1 voting; restoration outputs are clipped to assigned masks; controlled fallbacks keep entries voteable.
+Use reusable prebuilt torn-section overlays around the unchanged central King. Generate normal square images, clip each output into its assigned mask and stitch the sections with deliberate visible seams. Provider-native inpainting may improve coherence later but is not required for the approved composition rule.
 
-## Content production
+## Failure behavior
 
-- Final size and editorial review process for the King’s request pool.
-- Final number of restoration base portraits and seasonal variants.
-- Final recorded pigeon voice, music library and complete joke/reaction library.
+Generation/narration failure must not corrupt room state or block a match. Retry within explicit limits, then attach a controlled voteable fallback. Store job status separately from official score events.
 
-## Production infrastructure
+## Prompt and media records
 
-- Final hosting/backend stack used by Sites.
-- Exact realtime transport, validation, durable-room-state and reconnect libraries where architecture permits choice.
+Store the exact game prompt/input separately from generated media, provider profile, timestamps and durable object reference. History Books links the public-safe prompt and media while internal diagnostics may remain private.
 
-## Playtest tuning
+## Validation and content handling
 
-The approved defaults are 120-second R1/R2 writing, 90-second restoration writing and 45-second votes. These may be tuned only after real multiplayer measurement while keeping the 15–20-minute target and the rule that optional activity never blocks advancement.
+Treat all text/media as untrusted technical input: enforce length, encoding, schema, rate and file checks. No additional bespoke semantic submission moderation is part of the confirmed current design. Required provider/platform enforcement still applies.
 
-## Integration status
+## Future work
 
-King Prompter’s rules are approved, but the Sites version is not considered integrated until it implements and verifies the Bible contract. Components move from PROTOTYPE to APPROVED through review, and to INTEGRATED only after production confirmation.
-
+See `decisions/OPEN-DECISIONS.md` for provider identifiers, retry/timeouts, retention, public diagnostic fields and the possible separate ComfyUI deployment.

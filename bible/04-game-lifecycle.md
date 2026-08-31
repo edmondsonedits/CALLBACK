@@ -1,51 +1,40 @@
-# Game Lifecycle
+# Game Modes
 
-The complete game must progress through explicit server-owned phases. Exact names may evolve, but the underlying principle should remain stable.
+This directory contains authoritative specifications for active CALLBACK castle game modes.
 
-## Room setup
+A mature approved mode should include definitive rules, flow/copy, content guidance, a normative playthrough and an implementation contract. A shorter verified summary is acceptable while documentation is being expanded; missing values must remain open rather than being invented.
 
-Host creates a room, receives a room code and configures approved options. Room exists before the game starts.
+## King Prompter
 
-## Lobby
+**Status:** INTEGRATED IN SITES; real-group playtest pending  
+**Approved:** 2026-08-29
 
-Players join, obtain/recover stable identity, choose name/avatar and become ready. The host can see joined-player count. The game cannot silently invent players.
+- [Rules](./king-prompter/RULES.md)
+- [Flow and copy](./king-prompter/FLOW-AND-COPY.md)
+- [Content](./king-prompter/CONTENT.md)
+- [Examples](./king-prompter/EXAMPLES.md)
+- [Playthrough](./king-prompter/PLAYTHROUGH.md)
+- [Implementation](./king-prompter/IMPLEMENTATION.md)
 
-## Round intro
+A 15–20-minute, three-round medieval gallery game: two shared-request image rounds followed by collaborative Royal Restoration using prebuilt torn-section overlays.
 
-Server announces the round/mode and any special rule needed for that round. Presentation may use castle-room transitions, pigeon-host narration and crown motifs.
+## Royal War Room
 
-## Prompt
+**Status:** INTEGRATED AND PUBLISHED
 
-Server assigns or reveals the prompt/content required by the mode.
+- [Verified mode summary](./royal-war-room/README.md)
 
-## Submission
+Two councils secretly rank six orders, attack, then replay the situation on defence with rotating commanders, Spyglass clues and team scoring.
 
-Eligible players submit exactly what the mode allows. Submission ownership remains secret when anonymity is required. Do not reveal answers early.
+## Bowl of Fools (working title)
 
-## Reveal
+**Status:** APPROVED RULE DIRECTION; integration not verified
 
-Server determines reveal order and sends the content that may now be shown. Presentation can be theatrical, but reveal order is state-driven.
+- [Rules](./bowl-of-fools/RULES.md)
+- [Implementation contract](./bowl-of-fools/IMPLEMENTATION.md)
 
-## Voting
+A three-round repeated-scroll team game supporting local and Remote Live play: Describe, host-selected Drawing or Charades, then One Word.
 
-Server determines who may vote for what. Reject duplicate, late or ineligible votes. Client-side buttons are not proof a vote is valid.
+## Deprecated modes
 
-## Results
-
-Server calculates the official round result, including ties when applicable. Avatar reactions, pigeon commentary and spectacle happen after the result exists.
-
-## Scoreboard
-
-Server provides official cumulative scores. Later-round weighting must come from explicit rules, not UI math.
-
-## Transition
-
-Server decides whether to start another round, enter the finale or end the game.
-
-## Game over
-
-Official winner is announced and associated with the crown/victory presentation.
-
-## Reconnect behavior
-
-At any phase, a reconnecting player should restore current authoritative room/game state and their stable player identity. They should not be able to repeat already-consumed actions merely because they reloaded.
+Do not restore Question Cards, Legacy Quick or Legacy Extended without explicit approval.
