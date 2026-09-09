@@ -9,7 +9,6 @@
   const previewImage = document.getElementById('previewImage');
   const status = document.getElementById('statusMessage');
 
-  const focusButton = document.getElementById('focusButton');
   const draftNotice = document.getElementById('draftNotice');
   const discardDraftButton = document.getElementById('discardDraftButton');
   const penButton = document.getElementById('penTool');
@@ -156,13 +155,6 @@
       try { localStorage.removeItem(DRAFT_KEY); } catch (_) {}
     }
   }
-
-  focusButton.addEventListener('click', () => {
-    const active = root.classList.toggle('compact-mode');
-    focusButton.setAttribute('aria-pressed', String(active));
-    focusButton.textContent = active ? 'Details' : 'Compact';
-    announce(active ? 'Compact drawing view enabled.' : 'Full prompt details restored.');
-  });
 
   discardDraftButton.addEventListener('click', () => {
     engine.reset();
