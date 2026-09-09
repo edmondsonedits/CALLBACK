@@ -14,6 +14,10 @@
         color: '#171923',
         width: 12,
         tool: 'pen',
+        touchSmoothing: 0.72,
+        penSmoothing: 0.9,
+        mouseSmoothing: 0.82,
+        minPointDistance: 0.00065,
         onChange: null,
         ...options,
       };
@@ -28,6 +32,10 @@
       this.dpr = 1;
       this.raf = 0;
 
+      // The committed bitmap lets us redraw only the active stroke during pointermove.
+      // Undo/redo/load/resize rebuild this cache from the normalized action history.
+      this.committedCanvas = document.createElement('canvas');
+
       this.canvas.style.touchAction = 'none';
       this.canvas.style.userSelect = 'none';
       this.canvas.style.webkitUserSelect = 'none';
@@ -36,12 +44,13 @@
       this._onPointerMove = this._onPointerMove.bind(this);
       this._onPointerUp = this._onPointerUp.bind(this);
       this._resize = this._resize.bind(this);
+      this._preventContextMenu = (event) => event.preventDefault();
 
       canvas.addEventListener('pointerdown', this._onPointerDown);
       canvas.addEventListener('pointermove', this._onPointerMove);
       canvas.addEventListener('pointerup', this._onPointerUp);
       canvas.addEventListener('pointercancel', this._onPointerUp);
-      canvas.addEventListener('contextmenu', (event) => event.preventDefault());
+      canvas.addEventListener('contextmenu', this._preventContextMenu);
 
       if ('ResizeObserver' in global) {
         this.resizeObserver = new ResizeObserver(this._resize);
@@ -73,6 +82,7 @@
     undo() {
       if (!this.actions.length || this.activeStroke) return false;
       this.redoActions.push(this.actions.pop());
+      this._rebuildCommittedCache();
       this._scheduleRender();
       this._emitChange();
       return true;
@@ -81,6 +91,7 @@
     redo() {
       if (!this.redoActions.length || this.activeStroke) return false;
       this.actions.push(this.redoActions.pop());
+      this._rebuildCommittedCache();
       this._scheduleRender();
       this._emitChange();
       return true;
@@ -88,8 +99,10 @@
 
     clear() {
       if (this.activeStroke || this.isVisuallyEmpty()) return false;
-      this.actions.push({ type: 'clear' });
+      const action = { type: 'clear' };
+      this.actions.push(action);
       this.redoActions = [];
+      this._commitActionToCache(action);
       this._scheduleRender();
       this._emitChange();
       return true;
@@ -100,6 +113,7 @@
       this.redoActions = [];
       this.activeStroke = null;
       this.activePointerId = null;
+      this._rebuildCommittedCache();
       this._scheduleRender();
       this._emitChange();
     }
@@ -119,19 +133,22 @@
 
     serialize() {
       return {
-        version: 1,
+        version: 2,
         logicalSize: this.options.logicalSize,
         actions: JSON.parse(JSON.stringify(this.actions)),
       };
     }
 
     load(payload) {
-      if (!payload || payload.version !== 1 || !Array.isArray(payload.actions)) throw new Error('Unsupported drawing payload.');
-      this.actions = payload.actions.filter((action) => {
-        if (action.type === 'clear') return true;
-        return action.type === 'stroke' && ['pen', 'eraser'].includes(action.tool) && Array.isArray(action.points);
-      });
+      if (!payload || ![1, 2].includes(payload.version) || !Array.isArray(payload.actions)) {
+        throw new Error('Unsupported drawing payload.');
+      }
+
+      this.actions = payload.actions.map((action) => this._sanitizeAction(action)).filter(Boolean);
       this.redoActions = [];
+      this.activeStroke = null;
+      this.activePointerId = null;
+      this._rebuildCommittedCache();
       this._scheduleRender();
       this._emitChange();
     }
@@ -158,6 +175,13 @@
       return this.exportCanvas(size).toDataURL(type, quality);
     }
 
+    exportBlob(size = this.options.logicalSize, type = 'image/png', quality = 0.92) {
+      const output = this.exportCanvas(size);
+      return new Promise((resolve, reject) => {
+        output.toBlob((blob) => blob ? resolve(blob) : reject(new Error('Drawing export failed.')), type, quality);
+      });
+    }
+
     destroy() {
       if (this.destroyed) return;
       this.destroyed = true;
@@ -166,8 +190,31 @@
       this.canvas.removeEventListener('pointermove', this._onPointerMove);
       this.canvas.removeEventListener('pointerup', this._onPointerUp);
       this.canvas.removeEventListener('pointercancel', this._onPointerUp);
+      this.canvas.removeEventListener('contextmenu', this._preventContextMenu);
       this.resizeObserver?.disconnect();
       if (!this.resizeObserver) global.removeEventListener('resize', this._resize);
+    }
+
+    _sanitizeAction(action) {
+      if (!action || typeof action !== 'object') return null;
+      if (action.type === 'clear') return { type: 'clear' };
+      if (action.type !== 'stroke' || !['pen', 'eraser'].includes(action.tool) || !Array.isArray(action.points)) return null;
+
+      const points = action.points.slice(0, 12000).map((point) => ({
+        x: clamp(Number(point?.x) || 0, 0, 1),
+        y: clamp(Number(point?.y) || 0, 0, 1),
+        pressure: clamp(Number(point?.pressure) || 0.5, 0, 1),
+      }));
+      if (!points.length) return null;
+
+      return {
+        type: 'stroke',
+        tool: action.tool,
+        color: typeof action.color === 'string' ? action.color : '#171923',
+        width: clamp(Number(action.width) || 12, 2, 100),
+        pointerType: ['touch', 'pen', 'mouse'].includes(action.pointerType) ? action.pointerType : 'unknown',
+        points,
+      };
     }
 
     _resize() {
@@ -178,10 +225,18 @@
       this.dpr = clamp(global.devicePixelRatio || 1, 1, this.options.maxDevicePixelRatio);
       const nextWidth = Math.max(1, Math.round(this.cssWidth * this.dpr));
       const nextHeight = Math.max(1, Math.round(this.cssHeight * this.dpr));
+      let changed = false;
       if (this.canvas.width !== nextWidth || this.canvas.height !== nextHeight) {
         this.canvas.width = nextWidth;
         this.canvas.height = nextHeight;
+        changed = true;
       }
+      if (this.committedCanvas.width !== nextWidth || this.committedCanvas.height !== nextHeight) {
+        this.committedCanvas.width = nextWidth;
+        this.committedCanvas.height = nextHeight;
+        changed = true;
+      }
+      if (changed) this._rebuildCommittedCache();
       this._scheduleRender();
     }
 
@@ -194,9 +249,38 @@
       };
     }
 
+    _smoothingFor(pointerType) {
+      if (pointerType === 'pen') return this.options.penSmoothing;
+      if (pointerType === 'mouse') return this.options.mouseSmoothing;
+      return this.options.touchSmoothing;
+    }
+
+    _appendEventPoint(event) {
+      if (!this.activeStroke) return;
+      const raw = this._eventPoint(event);
+      const points = this.activeStroke.points;
+      const previous = points[points.length - 1];
+      if (!previous) {
+        points.push(raw);
+        return;
+      }
+
+      const follow = clamp(this._smoothingFor(event.pointerType), 0.45, 1);
+      const point = {
+        x: previous.x + (raw.x - previous.x) * follow,
+        y: previous.y + (raw.y - previous.y) * follow,
+        pressure: previous.pressure + (raw.pressure - previous.pressure) * follow,
+      };
+      const dx = point.x - previous.x;
+      const dy = point.y - previous.y;
+      const threshold = this.options.minPointDistance * this.options.minPointDistance;
+      if ((dx * dx + dy * dy) >= threshold) points.push(point);
+    }
+
     _onPointerDown(event) {
       if (this.activePointerId !== null) return;
       if (event.pointerType === 'mouse' && event.button !== 0) return;
+      if (event.isPrimary === false) return;
       event.preventDefault();
 
       this.activePointerId = event.pointerId;
@@ -207,9 +291,9 @@
         tool,
         color: this.options.color,
         width: tool === 'eraser' ? Math.max(this.options.width * 2.6, 32) : this.options.width,
+        pointerType: event.pointerType || 'unknown',
         points: [this._eventPoint(event)],
       };
-      this.actions.push(this.activeStroke);
       this.redoActions = [];
       this._scheduleRender();
     }
@@ -224,13 +308,7 @@
         if (coalesced && coalesced.length) events = coalesced;
       }
 
-      for (const sourceEvent of events) {
-        const point = this._eventPoint(sourceEvent);
-        const previous = this.activeStroke.points[this.activeStroke.points.length - 1];
-        const dx = point.x - previous.x;
-        const dy = point.y - previous.y;
-        if ((dx * dx + dy * dy) >= 0.0000008) this.activeStroke.points.push(point);
-      }
+      for (const sourceEvent of events) this._appendEventPoint(sourceEvent);
       this._scheduleRender();
     }
 
@@ -238,17 +316,17 @@
       if (event.pointerId !== this.activePointerId) return;
       event.preventDefault();
 
-      if (this.activeStroke && event.type === 'pointerup') {
-        const finalPoint = this._eventPoint(event);
-        const previous = this.activeStroke.points[this.activeStroke.points.length - 1];
-        const dx = finalPoint.x - previous.x;
-        const dy = finalPoint.y - previous.y;
-        if ((dx * dx + dy * dy) >= 0.0000008) this.activeStroke.points.push(finalPoint);
-      }
+      if (this.activeStroke && event.type === 'pointerup') this._appendEventPoint(event);
+      const completedStroke = this.activeStroke;
 
       try { this.canvas.releasePointerCapture?.(event.pointerId); } catch (_) {}
       this.activePointerId = null;
       this.activeStroke = null;
+
+      if (completedStroke?.points?.length) {
+        this.actions.push(completedStroke);
+        this._commitActionToCache(completedStroke);
+      }
       this._scheduleRender();
       this._emitChange();
     }
@@ -259,11 +337,35 @@
     }
 
     _renderVisible() {
-      const context = this.canvas.getContext('2d', { alpha: true });
+      const context = this.canvas.getContext('2d', { alpha: true, desynchronized: true });
       context.setTransform(1, 0, 0, 1, 0, 0);
       context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      context.drawImage(this.committedCanvas, 0, 0);
+
+      if (this.activeStroke) {
+        context.save();
+        context.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+        this._renderActions(context, this.cssWidth, this.cssHeight, [this.activeStroke]);
+        context.restore();
+      }
+    }
+
+    _rebuildCommittedCache() {
+      const context = this.committedCanvas.getContext('2d', { alpha: true });
+      context.setTransform(1, 0, 0, 1, 0, 0);
+      context.clearRect(0, 0, this.committedCanvas.width, this.committedCanvas.height);
+      context.save();
       context.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
       this._renderActions(context, this.cssWidth, this.cssHeight, this.actions);
+      context.restore();
+    }
+
+    _commitActionToCache(action) {
+      const context = this.committedCanvas.getContext('2d', { alpha: true });
+      context.save();
+      context.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+      this._renderActions(context, this.cssWidth, this.cssHeight, [action]);
+      context.restore();
     }
 
     _renderActions(context, width, height, actions) {
