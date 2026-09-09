@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101631">
+<title>Royal Misread Drawing Lab</title>
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<main id="drawingLab" class="lab-shell" tabindex="-1">
+  <section class="draw-card" aria-labelledby="drawTitle">
+    <header class="prompt-bar">
+      <div class="prompt-copy">
+        <span class="eyebrow">DRAW THIS</span>
+        <h1 id="drawTitle">A knight trying to ride a chicken</h1>
+        <p>Do your best. The AI will only see your drawing. <strong>No words, letters, or numbers.</strong></p>
+      </div>
+      <div class="quality-badge" aria-label="Drawing export resolution">1024²</div>
+    </header>
+
+    <div class="canvas-stage">
+      <canvas id="drawingCanvas" aria-label="Drawing canvas. Draw with touch, stylus, or mouse."></canvas>
+    </div>
+
+    <section class="toolbar" aria-label="Drawing tools">
+      <div class="tool-group tool-mode" role="group" aria-label="Drawing mode">
+        <button type="button" class="tool-button is-active" id="penTool" aria-pressed="true">
+          <span class="tool-icon" aria-hidden="true">✎</span><span>Pen</span>
+        </button>
+        <button type="button" class="tool-button" id="eraserTool" aria-pressed="false">
+          <span class="tool-icon" aria-hidden="true">⌫</span><span>Eraser</span>
+        </button>
+      </div>
+
+      <div class="tool-group sizes" role="group" aria-label="Brush size">
+        <button type="button" class="size-button" data-size="7" aria-label="Small brush"><span class="dot dot-small"></span></button>
+        <button type="button" class="size-button is-active" data-size="12" aria-label="Medium brush"><span class="dot dot-medium"></span></button>
+        <button type="button" class="size-button" data-size="22" aria-label="Large brush"><span class="dot dot-large"></span></button>
+      </div>
+
+      <div class="tool-group colors" role="group" aria-label="Drawing color">
+        <button type="button" class="color-button is-active" data-color="#171923" style="--swatch:#171923" aria-label="Ink black"></button>
+        <button type="button" class="color-button" data-color="#7659c9" style="--swatch:#7659c9" aria-label="Royal purple"></button>
+        <button type="button" class="color-button" data-color="#e75f56" style="--swatch:#e75f56" aria-label="Coral"></button>
+        <button type="button" class="color-button" data-color="#249caf" style="--swatch:#249caf" aria-label="Cyan"></button>
+        <button type="button" class="color-button" data-color="#d79c1f" style="--swatch:#d79c1f" aria-label="Gold"></button>
+      </div>
+    </section>
+
+    <footer class="action-bar">
+      <div class="history-actions" role="group" aria-label="Drawing history">
+        <button type="button" id="undoButton" class="action-button" disabled aria-label="Undo last stroke">↶ <span>Undo</span></button>
+        <button type="button" id="redoButton" class="action-button" disabled aria-label="Redo stroke">↷ <span>Redo</span></button>
+        <button type="button" id="clearButton" class="action-button danger" disabled>Clear</button>
+      </div>
+      <button type="button" id="doneButton" class="done-button" disabled>Done drawing</button>
+    </footer>
+
+    <div id="statusMessage" class="sr-status" aria-live="polite"></div>
+  </section>
+
+  <section id="previewPanel" class="preview-panel" hidden aria-labelledby="previewTitle">
+    <div class="preview-copy">
+      <span class="eyebrow">SUBMISSION PREVIEW</span>
+      <h2 id="previewTitle">This is exactly what the game will save.</h2>
+      <p>Square 1024 × 1024 PNG with a clean white background.</p>
+    </div>
+    <div class="preview-image-wrap"><img id="previewImage" alt="Preview of the completed drawing"></div>
+    <div class="preview-actions">
+      <button type="button" id="keepDrawingButton" class="secondary-button">Keep drawing</button>
+      <button type="button" id="useDrawingButton" class="done-button">Use this drawing</button>
+    </div>
+  </section>
+
+  <section id="lockedPanel" class="locked-panel" hidden>
+    <div class="locked-icon" aria-hidden="true">✓</div>
+    <h2>Drawing locked.</h2>
+    <p>The exported image and editable vector stroke data are both ready for the game to submit.</p>
+    <button type="button" id="newDrawingButton" class="secondary-button">Start another test drawing</button>
+  </section>
+</main>
+<script src="./drawing-engine.js"></script>
+<script src="./drawing-lab.js"></script>
+</body>
+</html>
