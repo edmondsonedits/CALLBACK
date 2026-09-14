@@ -1,0 +1,29 @@
+{
+  "default": "balanced",
+  "options": [
+    {
+      "id": "original",
+      "label": "Original",
+      "description": "The current CALLBACK image generator. Fastest and cheapest.",
+      "provider": "cloudflare-workers-ai",
+      "model": "@cf/black-forest-labs/flux-1-schnell",
+      "recommended": false
+    },
+    {
+      "id": "balanced",
+      "label": "Balanced",
+      "description": "Better image quality while staying very fast. Recommended for most games.",
+      "provider": "cloudflare-workers-ai",
+      "model": "@cf/black-forest-labs/flux-2-klein-4b",
+      "recommended": true
+    },
+    {
+      "id": "quality",
+      "label": "Quality",
+      "description": "Best-looking option of the three, with higher Cloudflare usage per image.",
+      "provider": "cloudflare-workers-ai",
+      "model": "@cf/black-forest-labs/flux-2-klein-9b",
+      "recommended": false
+    }
+  ]
+}
