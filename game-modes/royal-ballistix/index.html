@@ -129,7 +129,7 @@ function paddleVisual(id){
 }
 function makePaddle(id){const visual=paddleVisual(id),p={id,side:id,v:visual,pos:0,vel:0,life:START,alive:true,mag:false,magTime:0,magLock:0,held:[],pulseCd:0,pulseTime:0,pulseMiss:0,run:false,ai:rand(.02,.14),target:0};place(p);return p}
 function inward(p){return p.side===0?[0,-1]:p.side===1?[0,1]:p.side===2?[1,0]:[-1,0]}
-function tangent(p){return p.side<2?[1,0]:[0,1]}
+function tangent(p){return p.side===0?[1,0]:p.side===1?[-1,0]:p.side===2?[0,-1]:[0,1]}
 function posXZ(p){const d=FIELD-.55;if(p.side===0)return[p.pos,d];if(p.side===1)return[-p.pos,-d];if(p.side===2)return[-d,-p.pos];return[d,p.pos]}
 function place(p){const d=FIELD-.55,s=p.pos,g=p.v.g;if(p.side===0){g.position.set(s,0,d);g.rotation.y=0}else if(p.side===1){g.position.set(-s,0,-d);g.rotation.y=Math.PI}else if(p.side===2){g.position.set(-d,0,-s);g.rotation.y=-Math.PI/2}else{g.position.set(d,0,s);g.rotation.y=Math.PI/2}}
 function launcher(x,z){const g=new THREE.Group(),base=new THREE.Mesh(new THREE.CylinderGeometry(.38,.5,.4,10),new THREE.MeshStandardMaterial({color:0x584633,roughness:.66,metalness:.22}));base.position.y=.1;g.add(base);const barrel=new THREE.Mesh(new THREE.CylinderGeometry(.14,.2,.78,10),new THREE.MeshStandardMaterial({color:0x304653,roughness:.34,metalness:.72}));barrel.rotation.x=Math.PI/2;barrel.position.y=.48;g.add(barrel);const light=new THREE.Mesh(new THREE.SphereGeometry(.095,9,7),new THREE.MeshBasicMaterial({color:0x3d6b5c}));light.position.y=.67;g.add(light);g.position.set(x,0,z);scene.add(g);return{g,x,z,light,warn:0}}
