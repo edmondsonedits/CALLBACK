@@ -70,8 +70,8 @@ button,select{font:inherit;color:inherit}
   <div id="resultOverlay" class="overlay"><div class="card"><div style="font-size:42px">👑</div><h2 id="resultTitle">Round Won</h2><p id="resultCopy"></p><button id="next" class="primary" type="button">Next Round</button></div></div>
   <div id="loading" class="loading"><div><strong>⚜</strong><h1>ROYAL BALLISTIX</h1><p>Flooding the arena…</p></div></div>
 </div>
-<script type="module">
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.180.0/+esm";
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js"></script>
+<script>
 
 const $=s=>document.querySelector(s);
 const view=$("#view"),message=$("#message"),countdown=$("#countdown"),matchEl=$("#match"),flash=$("#flash");
@@ -185,7 +185,7 @@ function pauseToggle(){if(settingsOverlay.classList.contains("open")||resultOver
 $("#pause").addEventListener("click",pauseToggle);$("#resume").addEventListener("click",pauseToggle);$("#settings").addEventListener("click",()=>{settingsOverlay.classList.add("open");paused=true});$("#closeSettings").addEventListener("click",()=>{settingsOverlay.classList.remove("open");paused=false});$("#restart").addEventListener("click",restart);$("#next").addEventListener("click",nextRound);
 $("#debugToggle").addEventListener("click",()=>{debugOn=!debugOn;$("#debugToggle").textContent=debugOn?"ON":"OFF";debugEl.classList.toggle("show",debugOn)});$("#sound").addEventListener("click",()=>{soundOn=!soundOn;$("#sound").textContent=soundOn?"🔊":"🔇";if(soundOn)audioInit()});
 addEventListener("resize",resize);document.addEventListener("visibilitychange",()=>{if(document.hidden&&!paused&&phase==="fight")pauseToggle()});
-try{init()}catch(err){$("#loading").innerHTML="<div><strong>⚠</strong><h1>Renderer Error</h1><p>"+String(err.message||err)+"</p></div>";console.error(err)}
+try{if(typeof THREE==="undefined")throw new Error("3D engine failed to load. Refresh once or use the direct play link.");init()}catch(err){$("#loading").innerHTML="<div><strong>⚠</strong><h1>Renderer Error</h1><p>"+String(err.message||err)+"</p></div>";console.error(err)}
 </script>
 </body>
 </html>
